@@ -184,7 +184,7 @@ public class Ex2Sheet implements Sheet {
                 Cell cell = get(i, j);
                 if (cell != null && cell.getData() != null && !cell.getData().isEmpty()) {
                     // If it starts with '=', it's a formula (until proven otherwise)
-                    if (cell.getData().startsWith("=")) {
+                    if (cell.getData().startsWith("=") && (!cell.getData().startsWith("=if"))) {
                         cell.setType(Ex2Utils.FORM);
                     }
                 }
@@ -631,8 +631,6 @@ public class Ex2Sheet implements Sheet {
         String[] parts = form.split(",");
         if (parts.length != 3) throw new IllegalArgumentException("Invalid IF format");
 
-        System.out.println(Arrays.toString(parts));
-
         // Extract condition and branches
         String condition = parts[0].trim();
         String ifTrue = parts[1].trim();
@@ -651,12 +649,14 @@ public class Ex2Sheet implements Sheet {
         if (evaluateCondition(condition, x, y)) {
             SCell result_of_if = new SCell(ifTrue);
             if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifTrue, x, y));
-            else if ((result_of_if.getType() == Ex2Utils.NUMBER) || (result_of_if.getType() == Ex2Utils.TEXT)) return ifTrue;
+            else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(ifTrue));
+            else if (result_of_if.getType() == Ex2Utils.TEXT) return ifTrue;
             else throw new IllegalArgumentException("Invalid IF format");
         } else {
             SCell result_of_if = new SCell(ifFalse);
             if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifFalse, x, y));
-            else if ((result_of_if.getType() == Ex2Utils.NUMBER) || (result_of_if.getType() == Ex2Utils.TEXT)) return ifFalse;
+            else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(ifFalse));
+            else if (result_of_if.getType() == Ex2Utils.TEXT) return ifFalse;
             else throw new IllegalArgumentException("Invalid IF format");
         }
     }

@@ -26,15 +26,19 @@ public class SCell implements Cell {
             return;
         }
 
-        // The cell contains a valid number (Double) if we were able to convert it to a number properly
-        // (using a function we created that catches the conversion error if there is an error)
+
         if (isNumber(line)) {
+            // The cell contains a valid number (Double) if we were able to convert it to a number properly
+            // (using a function we created that catches the conversion error if there is an error)
             type = Ex2Utils.NUMBER;
+        } else if (line.startsWith("=if")) {
+            // this cell is a IF type ??
+            type = Ex2Utils.IF_TYPE;
         }
 
-        // We have a formula if the first character is '='
+        // We have a formula if the first character is just an '='
         // the test if there is any error in the formula is considered in the spreadsheet class
-        else if (line.charAt(0) == '=') {
+        else if ((line.charAt(0) == '=') && (!line.startsWith("=if"))) {
             type = Ex2Utils.FORM;
         }
 
@@ -108,6 +112,7 @@ public class SCell implements Cell {
     @Override
     public void setType(int t) {
         type = t;
+        System.out.println("Type set to " + t);
     }
 
     /**

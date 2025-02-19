@@ -230,7 +230,7 @@ class Ex2SheetTest {
 
     // tests taken form the first stage, testing 'computeForm' method:
     @Test
-    void computeFormTest() {
+    void computeFormTest() throws ConditionCalculationException, FuncCalculationException {
         // Basic operations
         TestSheet.set(0, 0, "1");  // A0 = 1
         TestSheet.set(1, 0, "2");  // B0 = 2
@@ -321,6 +321,59 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("(1+2"));
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("1+2"));
     }
+
+        @Test
+    void IFex4Test() {
+            // Basic IF conditions
+             TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
+            assertEquals("1.0", TestSheet.value(20, 0));
+    }
+
+
+//    @Test
+//    void IFex4Test() {
+//        // Basic IF conditions
+//        TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
+//        TestSheet.set(20, 1, "=if(U0>3, big,small)"); // U1 = small
+//        TestSheet.set(20, 5, "=if(1000 <= 2000 ,10,2)"); //U5 = 10.0
+//        TestSheet.set(20, 6, "=if(101+1==102,20,0)"); //U6 = 20.0
+//        TestSheet.set(20, 7, "=if(2*3 > 5, 100, 200)"); // U7 = 100.0
+//        TestSheet.set(20, 2, "=if(U6/U5 == U0, =U0+1, =U7*3)"); // U2 = 300.0
+//
+//        assertEquals("1.0", TestSheet.value(20, 0));
+//        assertEquals("small", TestSheet.value(20, 1));
+//        assertEquals("10.0", TestSheet.value(20, 5));
+//        assertEquals("20.0", TestSheet.value(20, 6));
+//        assertEquals("100.0", TestSheet.value(20, 7));
+//        assertEquals("300.0", TestSheet.value(20, 2));
+//
+//        // IF with references
+//        TestSheet.set(20, 7, "=if(U5<U6,30,-101)"); //U7 = 30
+//        TestSheet.set(20, 8, "=if(U6 != U7,3,777)"); //U8 = 3
+//        assertEquals("30.0", TestSheet.value(20, 7));
+//        assertEquals("3.0", TestSheet.value(20, 8));
+//
+//        //IF ERR
+//        TestSheet.set(20, 0, "=if(1,2,3"); //U0
+//        TestSheet.set(20, 1, "=if(u6>1, 1 )"); // U1
+//        TestSheet.set(20, 2, "=if(u566<u6, 1, 0)"); // U2
+//        TestSheet.set(20, 3, "=if(test<2, 1, 0)"); // U3
+//        TestSheet.set(20, 4, "=if(u5<u6,  ==Z999, 12)"); // U4
+//        TestSheet.set(20, 5, "=if(u0>3,2,4)"); //U5
+//        TestSheet.set(20, 7, "=if(, 5, 10)"); // U7
+//        TestSheet.set(20, 8, "=if(A1>0, B1)"); // U8
+//        TestSheet.set(20, 9, "=if(A1,, 10)"); // U9
+//
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 0));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 1));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 2));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 3));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 4));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 5));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 7));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 8));
+//        assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20,9));
+//    }
 
     // let's test the I/O methods:
     @Test

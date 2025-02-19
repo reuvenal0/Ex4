@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Arrays;
 
 public class Ex2Sheet implements Sheet {
     private Cell[][] table; // 2D array of Cells
@@ -124,22 +125,30 @@ public class Ex2Sheet implements Sheet {
 
             // If the cell is not empty, we continue:
             if (c!=null) {
-                // If there is an error in calculating the formula, then we will print the prefix error String:
                 if (c.getType() == Ex2Utils.ERR_FORM_FORMAT) {
+                // If there is an error in calculating the formula, then we will print the prefix error String:
                     return Ex2Utils.ERR_FORM;
                 }
-
+                else if (c.getType() == Ex2Utils.ERR_CYCLE_FORM) {
                 // If there is a circularity error in the formula inside this Cell then we will print the prefix error String:
-                if (c.getType() == Ex2Utils.ERR_CYCLE_FORM) {
                     return Ex2Utils.ERR_CYCLE;
+                } else if (c.getType() == Ex2Utils.ERR_FUNC) {
+                    // If there is a function error inside this Cell then we will print the prefix error String:
+                    return Ex2Utils.ERR_IF_str;
+                }
+                else if (c.getType() == Ex2Utils.ERR_IF) {
+                    // If there is a IF error inside this Cell then we will print the prefix error String:
+                    return Ex2Utils.ERR_IF_str;
                 }
 
                 // We will print the value if the data inside the cell is not empty.
                 if (c.toString() != null)
                 {
                     if (c.getOrder() == Ex2Utils.ERR_CYCLE_FORM) {
+                        // If there is a circularity error in the formula inside this Cell then we will print the prefix error String:
                         c.setType(Ex2Utils.ERR_CYCLE_FORM);
-                        ans = Ex2Utils.ERR_CYCLE; return ans;}
+                        ans = Ex2Utils.ERR_CYCLE; return ans;
+                    }
                     // Calculate the cell contents:
                     ans = eval(x, y);
                     // If we get null we will print an empty string.
@@ -196,36 +205,25 @@ public class Ex2Sheet implements Sheet {
                         Cell cell = get(i, j);
                         if (cell != null)
                         {
-                            // So there is some data in the cell, We will try to calculate and be catch for errors:
-                            try {
-                                if (depths[i][j] == Ex2Utils.ERR_CYCLE_FORM) // The depth of the cell is defined in the depth array as a circularity error -
-                                {
+                            if (depths[i][j] == Ex2Utils.ERR_CYCLE_FORM) // The depth of the cell is defined in the depth array as a circularity error -
+                            {
+                                if (table[i][j].getType() == Ex2Utils.IF_TYPE) {
+                                    table[i][j].setType(Ex2Utils.ERR_IF);
+                                    table[i][j].setOrder(Ex2Utils.ERR_IF);
+                                }
+                                else if (table[i][j].getType() == Ex2Utils.FUCN_TYPE) {
+                                    table[i][j].setType(Ex2Utils.ERR_FUNC);
+                                    table[i][j].setOrder(Ex2Utils.ERR_FUNC);
+                                }
+                                else {
                                     //  we have a cell with a circularity error, we will mark it accordingly:
                                     cell.setOrder(Ex2Utils.ERR_CYCLE_FORM);
                                     cell.setType(Ex2Utils.ERR_CYCLE_FORM);
                                 }
-                                else
-                                {
-                                    // Try to evaluate the cell:
-                                    try {
-                                        String calculated = eval(i, j);
-                                        // If we succeeded then there is no error!
-                                    } catch (StackOverflowError e) {
-                                        // We have infinite recursion - so we have a cell with a circularity error, we will mark it accordingly:
-                                        table[i][j].setType(Ex2Utils.ERR_CYCLE_FORM);
-                                        table[i][j].setOrder(Ex2Utils.ERR_CYCLE_FORM);
-                                        depths[i][j] = Ex2Utils.ERR_CYCLE_FORM;
-                                    }
-                                    cell.setOrder(currentDepth); // Set the Cell order
-                                }
                             }
-                            catch (Exception e) {
-                                // If evaluation fails, There is a calculation error in the formula of this cell,
-                                // we will change the cell type from a formula, to ERR_FORM_FORMAT Cell type:
-                                if (cell.getType() == Ex2Utils.FORM)
-                                {
-                                    cell.setType(Ex2Utils.ERR_FORM_FORMAT);
-                                }
+                            else {
+                                String calculated = eval(i, j);
+                                cell.setOrder(currentDepth); // Set the Cell order
                             }
                         }
                     }
@@ -342,8 +340,13 @@ public class Ex2Sheet implements Sheet {
         for (int i = 0; i < width(); i++) {
             for (int j = 0; j < height(); j++) {
                 if (ans[i][j] == -1) {
-                    table[i][j].setType(Ex2Utils.ERR_CYCLE_FORM);
-                    table[i][j].setOrder(Ex2Utils.ERR_CYCLE_FORM);
+                    if (table[i][j].getData().startsWith("=if")) {
+                        table[i][j].setType(Ex2Utils.ERR_IF);
+                        table[i][j].setOrder(Ex2Utils.ERR_IF);
+                    } else {
+                        table[i][j].setType(Ex2Utils.ERR_CYCLE_FORM);
+                        table[i][j].setOrder(Ex2Utils.ERR_CYCLE_FORM);
+                    }
                 }
             }
         }
@@ -384,19 +387,35 @@ public class Ex2Sheet implements Sheet {
         if (get(x,y).getType() == Ex2Utils.NUMBER) {
             return Double.toString(Double.parseDouble(get(x,y).getData()));
         }
+        // ?? אולי יש לנו כאן תנאי - נחשב אותו ונחזיר שגיאת תנאי בכל מצב שמשהו משתבש
+        if (get(x,y).getType() == Ex2Utils.IF_TYPE) {
+            System.out.println("inside");
+            try {
+                return computeIF(ans,x,y);
+            } catch (StackOverflowError | Exception e) {
+                System.out.println("inside 2");
+                table[x][y].setType(Ex2Utils.ERR_IF);
+                table[x][y].setOrder(Ex2Utils.ERR_IF);
+                return Ex2Utils.ERR_IF_str;
+            }
+        }
+
+//          to-do
+//        table[x][y].setType(Ex2Utils.ERR_FUNC);
+//        table[x][y].setOrder(Ex2Utils.ERR_FUNC);
+//        return Ex2Utils.ERR_FUCN_str;
 
         // If the content is neither text nor a number, then there is a formula that needs to be calculated
         // We will try to calculate it, and catch in case of an error:
         try {
-            return Double.toString(computeForm(ans, x, y));
-            // We were able to calculate and convert the double value we received into a string
+            return computeForm(ans, x, y).toString();
+            // We were able to calculate the form!
         } catch (StackOverflowError e) {
             // We have infinite recursion - so we have a cell with a circularity error, we will mark it accordingly:
             table[x][y].setType(Ex2Utils.ERR_CYCLE_FORM);
             table[x][y].setOrder(Ex2Utils.ERR_CYCLE_FORM);
             return Ex2Utils.ERR_CYCLE;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // There is an error, so you need to change the type of the cell, and print that there is an error in the cell,
             // This means that an error message will be displayed in the table itself, not the formula itself that was entered into the cell.
             get(x,y).setType(Ex2Utils.ERR_FORM_FORMAT);
@@ -496,13 +515,13 @@ public class Ex2Sheet implements Sheet {
         // We will perform the connection between the parts - according to the operator, each part will be calculated in this method again (recursion):
         switch (operator) {
             case '+':
-                return computeForm("=" + firstPart, x,y) + computeForm("=" + secondPart, x,y);
+                return (computeForm("=" + firstPart, x,y)) + (computeForm("=" + secondPart, x,y));
             case '-':
-                return computeForm("=" + firstPart, x,y) - computeForm("=" + secondPart, x,y);
+                return (computeForm("=" + firstPart, x,y)) - (computeForm("=" + secondPart, x,y));
             case '*':
-                return computeForm("=" + firstPart, x,y) * computeForm("=" + secondPart, x,y);
+                return (computeForm("=" + firstPart, x,y)) * (computeForm("=" + secondPart, x,y));
             case '/':
-                return computeForm("=" + firstPart, x,y) / computeForm("=" + secondPart, x,y);
+                return (computeForm("=" + firstPart, x,y)) / (computeForm("=" + secondPart, x,y));
         }
 
         // If there is any problem - we will throw an error:
@@ -589,6 +608,95 @@ public class Ex2Sheet implements Sheet {
         }
         // In case of a fault string:
         throw new IllegalArgumentException("invalid value");
+    }
+
+
+    String computeIF (String form, int x, int y) {
+        // Handle 'If' function - Ex4 addition:
+
+        // empty String isn't valid:
+        if ((form == null) || form.isEmpty()) throw new IllegalArgumentException("invalid value");
+
+        // we got to have '=' char at the beginning of the String:
+        // we can write 'if' in upper or lower case
+        // if must end with ')'
+        //            System.out.println(BracketEndInd(form));??
+        if ((!form.toLowerCase().startsWith("=if(")) || (!form.endsWith(")"))) {
+            throw new IllegalArgumentException("Invalid IF format");
+        }
+
+        form = form.substring(4,form.length()-1); // Remove the '=' char, if necessary we will put it back (recursion)
+        form = form.replaceAll("\\s",""); // We will delete all the space chars in the String.
+
+        String[] parts = form.split(",");
+        if (parts.length != 3) throw new IllegalArgumentException("Invalid IF format");
+
+        System.out.println(Arrays.toString(parts));
+
+        // Extract condition and branches
+        String condition = parts[0].trim();
+        String ifTrue = parts[1].trim();
+        String ifFalse = parts[2].trim();
+
+        CellEntry xyCell = new CellEntry(x, y);
+        String toCellName = xyCell.toString();
+
+        if (condition.contains(toCellName) || ifTrue.contains(toCellName) || ifFalse.contains(toCellName)) {
+            throw new IllegalArgumentException("Self-referencing IF error");
+        }
+
+        table[x][y].setType(Ex2Utils.IF_TYPE);
+
+        // Evaluate condition and return appropriate value
+        if (evaluateCondition(condition, x, y)) {
+            SCell result_of_if = new SCell(ifTrue);
+            if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifTrue, x, y));
+            else if ((result_of_if.getType() == Ex2Utils.NUMBER) || (result_of_if.getType() == Ex2Utils.TEXT)) return ifTrue;
+            else throw new IllegalArgumentException("Invalid IF format");
+        } else {
+            SCell result_of_if = new SCell(ifFalse);
+            if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifFalse, x, y));
+            else if ((result_of_if.getType() == Ex2Utils.NUMBER) || (result_of_if.getType() == Ex2Utils.TEXT)) return ifFalse;
+            else throw new IllegalArgumentException("Invalid IF format");
+        }
+    }
+
+    /**
+     *
+     * @param condition
+     * @param x
+     * @param y
+     * @return
+     */
+    private boolean evaluateCondition(String condition, int x, int y) {
+        String selectedOp = null;
+        for (String op : Ex2Utils.B_OPS) {
+            if (condition.contains(op)) {
+                selectedOp = op;
+                break;
+            }
+        }
+        if (selectedOp == null) throw new IllegalArgumentException("Invalid IF format");
+
+        String[] condetionParts = condition.split(selectedOp);
+        if (condetionParts.length != 2) throw new IllegalArgumentException("Invalid IF format");
+        double val1,val2;
+        try {
+            val1 = computeForm("=" + condetionParts[0], x, y);
+            val2 = computeForm("=" + condetionParts[1], x, y);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid IF format");
+        }
+
+        switch (selectedOp) {
+            case "<": return val1 < val2;
+            case ">": return val1 > val2;
+            case "==": return val1 == val2;
+            case "<=": return val1 <= val2;
+            case ">=": return val1 >= val2;
+            case "!=": return val1 != val2;
+            default: throw new IllegalArgumentException("Invalid IF arguments");
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Ex2Sheet implements Sheet {
     Cell[][] table; // 2D array of Cells
@@ -701,11 +702,17 @@ public class Ex2Sheet implements Sheet {
 
     private List<Double> getRangeCells (Range2D range) {
         List<Double> AllCellRange = new ArrayList<>();
-        for (int i = range.getStartX(); i <= range.getStartX(); i++) {
+        for (int i = range.getStartX(); i <= range.getEndX(); i++) {
             for (int j = range.getStartY(); j <= range.getEndY(); j++) {
-                if (isIn(i,j)){
+                if (isIn(i,j))
+                {
+                    System.out.println("x: " + i);
+                    System.out.println("y: " + j);
+
                     try {
-                        AllCellRange.add(Double.parseDouble(value(i,j)));
+                        if ((table[i][j].getData() != null) && (!Objects.equals(table[i][j].getData(), ""))) {
+                            AllCellRange.add(Double.parseDouble(value(i, j)));
+                        }
                     } catch (Exception e) {
                         throw new IllegalArgumentException("Invalid range - computable (numarical) value only");
                     }

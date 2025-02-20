@@ -1,12 +1,11 @@
 public class Range2D {
     private CellEntry StartIndex = null;
     private CellEntry EndIndex = null;
+    private boolean ValidRange = false;
 
     public boolean isValidRange() {
         return ValidRange;
     }
-
-    private boolean ValidRange;
 
     public CellEntry getStartIndex() {
         if (ValidRange) {
@@ -22,25 +21,46 @@ public class Range2D {
         else {return null;}
     }
 
+    public int getStartX() {
+        return this.StartIndex.getX();
+    }
+
+    public int getEndX() {
+        return this.EndIndex.getX();
+    }
+
+
+    public int getStartY() {
+        return this.StartIndex.getY();
+    }
+
+
+    public int getEndY() {
+        return this.EndIndex.getY();
+    }
+
     public Range2D(String range) {
-        if (range == null || range.length() == 0) {
+        if (range == null || range.isEmpty()) {
             this.ValidRange = false;
             return;
         }
 
         String[] parts = range.split(":");
 
-        if (parts.length != 2 && StartIndex.isValid() && EndIndex.isValid()) {
+        if (parts.length == 2) {
             this.StartIndex = new CellEntry(parts[0]);
             this.EndIndex = new CellEntry(parts[1]);
-            this.ValidRange = true;
-        } else {
-            this.ValidRange = false;
+
+            if (StartIndex.isValid() && EndIndex.isValid()) {
+                this.ValidRange = true;
+            } else {
+                this.StartIndex = null;
+                this.EndIndex = null;
+            }
         }
     }
 
     public boolean insideRange (int x, int y) {
-        if (((StartIndex.getX() <= x && x <= EndIndex.getX())) && ((StartIndex.getY() <= y) && (y <= EndIndex.getY()))) return true;
-        return false;
+        return (((getStartX() <= x && x <= getEndX())) && ((getStartY() <= y) && (y <= getEndY())));
     }
 }

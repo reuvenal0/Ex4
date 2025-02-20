@@ -1,5 +1,6 @@
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ex2Sheet implements Sheet {
     Cell[][] table; // 2D array of Cells
@@ -684,11 +685,10 @@ public class Ex2Sheet implements Sheet {
 
                 Range2D range = new Range2D(form);
                 if (!range.isValidRange() || range.insideRange(x,y)) throw new IllegalArgumentException("Invalid range");
-                CellEntry StartIndex = range.getStartIndex();
-                CellEntry EndIndex = range.getEndIndex();
+                List<Double> AllCellRange = getRangeCells(range);
 
                 switch (i) {
-                    case 0: //sum
+                    case 0: return sum(AllCellRange);
                     case 1: //avrege
                     case 2: //min
                     case 3: // max
@@ -697,6 +697,30 @@ public class Ex2Sheet implements Sheet {
         }
         // ?? todo אם הגענו עד לפה אז אין מה לחפש כאן
         throw new IllegalArgumentException("Invalid function format");
+    }
+
+    private List<Double> getRangeCells (Range2D range) {
+        List<Double> AllCellRange = new ArrayList<>();
+        for (int i = range.getStartX(); i <= range.getStartX(); i++) {
+            for (int j = range.getStartY(); j <= range.getEndY(); j++) {
+                if (isIn(i,j)){
+                    try {
+                        AllCellRange.add(Double.parseDouble(value(i,j)));
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Invalid range - computable (numarical) value only");
+                    }
+                }
+            }
+        }
+        return AllCellRange;
+    }
+
+    private double sum (List<Double> AllCellRange) {
+        double sum = 0;
+        for (Double CellVal : AllCellRange) {
+            sum += CellVal;
+        }
+        return sum;
     }
 
     /**

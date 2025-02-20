@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Ex2Sheet implements Sheet {
-    private Cell[][] table; // 2D array of Cells
+    Cell[][] table; // 2D array of Cells
 
     /**
      * constructor for an Ex2Sheet object - 2D spreadsheet
@@ -396,7 +396,6 @@ public class Ex2Sheet implements Sheet {
             try {
                 return computeIF(ans,x,y);
             } catch (StackOverflowError | Exception e) {
-                System.out.println("inside catch");
                 table[x][y].setType(Ex2Utils.ERR_IF);
                 table[x][y].setOrder(Ex2Utils.ERR_IF);
                 return Ex2Utils.ERR_IF_str;
@@ -423,7 +422,6 @@ public class Ex2Sheet implements Sheet {
                 // There is an error, so you need to change the type of the cell, and print that there is an error in the cell,
                 // This means that an error message will be displayed in the table itself, not the formula itself that was entered into the cell.
                 get(x,y).setType(Ex2Utils.ERR_FORM_FORMAT);
-                System.out.println("09-04");
                 return Ex2Utils.ERR_FORM;
             }
         }
@@ -628,7 +626,6 @@ public class Ex2Sheet implements Sheet {
         // we got to have '=' char at the beginning of the String:
         // we can write 'if' in upper or lower case
         // if must end with ')'
-        //            System.out.println(BracketEndInd(form));??
         if ((!form.toLowerCase().startsWith("=if(")) || (!form.endsWith(")"))) {
             throw new IllegalArgumentException("Invalid IF format");
         }

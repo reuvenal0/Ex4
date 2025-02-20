@@ -323,13 +323,6 @@ class Ex2SheetTest {
     }
 
     @Test
-    void IFex4Testplu() {
-            TestSheet.set(20, 0, "=if(1,2,3"); //U0
-            System.out.println(TestSheet.value(20, 0));
-    }
-
-
-    @Test
     void IFex4Test() {
         // Basic IF conditions
         TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0

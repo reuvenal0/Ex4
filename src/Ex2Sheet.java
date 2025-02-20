@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -189,8 +190,16 @@ public class Ex2Sheet implements Sheet {
                     if (cell.getData().startsWith("=if")) {
                         cell.setType(Ex2Utils.IF_TYPE);
                     }
+
+                    if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().startsWith("=" + func))) {
+                        cell.setType(Ex2Utils.FUCN_TYPE);
+                    }
+
                     // If it starts with '=', it's a formula (until proven otherwise)
-                    if (cell.getData().startsWith("=") && (!cell.getData().startsWith("=if"))) {
+                    if (cell.getData().startsWith("=") &&
+                            (!cell.getData().startsWith("=if")) &&
+                            (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().startsWith("=" + func))) )
+                    {
                         cell.setType(Ex2Utils.FORM);
                     }
                 }
@@ -401,6 +410,14 @@ public class Ex2Sheet implements Sheet {
                 table[x][y].setType(Ex2Utils.ERR_IF);
                 table[x][y].setOrder(Ex2Utils.ERR_IF);
                 return Ex2Utils.ERR_IF_str;
+            }
+        } else if (get(x, y).getType() == Ex2Utils.FUCN_TYPE) {
+            try {
+                return computeFun(ans,x,y).toString();
+            } catch (StackOverflowError | Exception e) {
+                table[x][y].setType(Ex2Utils.ERR_FUNC);
+                table[x][y].setOrder(Ex2Utils.ERR_FUNC);
+                return Ex2Utils.ERR_FUCN_str;
             }
         }
 

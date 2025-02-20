@@ -322,6 +322,17 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("1+2"));
     }
 
+//    @Test
+//    void functiontest() {
+//        TestSheet.set(0, 0, "98.299");
+//        TestSheet.set(0, 1, "1.701");
+//        TestSheet.set(1, 0, "45.5");
+//        TestSheet.set(1, 1, "55.5");
+//
+//        System.out.println(TestSheet.computeFun("=sum(A0:B1)", 1,1));
+//
+//    }
+
     @Test
     void IFex4Test() {
         // Basic IF conditions

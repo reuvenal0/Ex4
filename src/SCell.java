@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class SCell implements Cell {
     private String line; //The String data saves in the Cell (raw data - Not calculated)
     private int type; // The type of cell - according to the settings in Ex2Utils
@@ -34,11 +36,15 @@ public class SCell implements Cell {
         } else if (line.startsWith("=if")) {
             // this cell is a IF type ??
             type = Ex2Utils.IF_TYPE;
+        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.startsWith("=" + func))) {
+            type = Ex2Utils.FUCN_TYPE;
         }
 
         // We have a formula if the first character is just an '='
         // the test if there is any error in the formula is considered in the spreadsheet class
-        else if ((line.charAt(0) == '=') && (!line.startsWith("=if"))) {
+        else if ((line.charAt(0) == '=') && (!line.startsWith("=if"))
+                && (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> line.startsWith("=" + func))))
+        {
             type = Ex2Utils.FORM;
         }
 

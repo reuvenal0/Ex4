@@ -1,6 +1,11 @@
 public class Range2D {
     private CellEntry StartIndex = null;
     private CellEntry EndIndex = null;
+
+    public boolean isValidRange() {
+        return ValidRange;
+    }
+
     private boolean ValidRange;
 
     public CellEntry getStartIndex() {
@@ -32,5 +37,10 @@ public class Range2D {
         } else {
             this.ValidRange = false;
         }
+    }
+
+    public boolean insideRange (int x, int y) {
+        if (((StartIndex.getX() <= x && x <= EndIndex.getX())) && ((StartIndex.getY() <= y) && (y <= EndIndex.getY()))) return true;
+        return false;
     }
 }

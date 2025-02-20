@@ -666,6 +666,39 @@ public class Ex2Sheet implements Sheet {
         }
     }
 
+    Double computeFun (String form, int x, int y) {
+        // empty String isn't valid:
+        if ((form == null) || form.isEmpty()) throw new IllegalArgumentException("invalid value");
+
+        // we got to have '=' char at the beginning of the String:
+        // we can write 'if' in upper or lower case
+        // if must end with ')'
+
+        String SelectedFunc = null;
+
+        for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
+            if ((form.toLowerCase().startsWith("=" + Ex2Utils.FUNCTIONS[i]) && (form.endsWith(")"))))
+            {
+                int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
+                form = form.substring(selectRMV,form.length()-1);
+
+                Range2D range = new Range2D(form);
+                if (!range.isValidRange() || range.insideRange(x,y)) throw new IllegalArgumentException("Invalid range");
+                CellEntry StartIndex = range.getStartIndex();
+                CellEntry EndIndex = range.getEndIndex();
+
+                switch (i) {
+                    case 0: //sum
+                    case 1: //avrege
+                    case 2: //min
+                    case 3: // max
+                }
+            }
+        }
+        // ?? todo אם הגענו עד לפה אז אין מה לחפש כאן
+        throw new IllegalArgumentException("Invalid function format");
+    }
+
     /**
      *
      * @param condition
@@ -703,6 +736,8 @@ public class Ex2Sheet implements Sheet {
             default: throw new IllegalArgumentException("Invalid IF arguments");
         }
     }
+
+
 
     /**
      * Load the content of a saved SpreadSheet into this SpreadSheet.

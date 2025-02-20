@@ -183,6 +183,10 @@ public class Ex2Sheet implements Sheet {
             for (int j = 0; j < height(); j++) {
                 Cell cell = get(i, j);
                 if (cell != null && cell.getData() != null && !cell.getData().isEmpty()) {
+                    // ??
+                    if (cell.getData().startsWith("=if")) {
+                        cell.setType(Ex2Utils.IF_TYPE);
+                    }
                     // If it starts with '=', it's a formula (until proven otherwise)
                     if (cell.getData().startsWith("=") && (!cell.getData().startsWith("=if"))) {
                         cell.setType(Ex2Utils.FORM);

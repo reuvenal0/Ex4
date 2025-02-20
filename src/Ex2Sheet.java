@@ -737,6 +737,7 @@ public class Ex2Sheet implements Sheet {
     }
 
     private double sum (List<Double> AllCellRange) {
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         double sum = 0;
         for (Double CellVal : AllCellRange) {
             sum += CellVal;
@@ -745,6 +746,7 @@ public class Ex2Sheet implements Sheet {
     }
 
     private double average (List<Double> AllCellRange) {
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         double sum = 0;
         for (Double CellVal : AllCellRange) {
             sum += CellVal;
@@ -753,16 +755,12 @@ public class Ex2Sheet implements Sheet {
     }
 
     private double min (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) {
-            throw new IllegalArgumentException("No min - list cannot be null or empty");
-        }
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         return Collections.min(AllCellRange);
     }
 
     private double max (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) {
-            throw new IllegalArgumentException("No max - list cannot be null or empty");
-        }
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         return Collections.max(AllCellRange);
     }
 

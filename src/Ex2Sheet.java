@@ -207,7 +207,7 @@ public class Ex2Sheet implements Sheet {
                         {
                             if (depths[i][j] == Ex2Utils.ERR_CYCLE_FORM) // The depth of the cell is defined in the depth array as a circularity error -
                             {
-                                if (table[i][j].getType() == Ex2Utils.IF_TYPE) {
+                                if (table[i][j].getType() == Ex2Utils.IF_TYPE || table[i][j].getType() == Ex2Utils.ERR_IF) {
                                     table[i][j].setType(Ex2Utils.ERR_IF);
                                     table[i][j].setOrder(Ex2Utils.ERR_IF);
                                 }
@@ -388,12 +388,11 @@ public class Ex2Sheet implements Sheet {
             return Double.toString(Double.parseDouble(get(x,y).getData()));
         }
         // ?? אולי יש לנו כאן תנאי - נחשב אותו ונחזיר שגיאת תנאי בכל מצב שמשהו משתבש
-        if (get(x,y).getType() == Ex2Utils.IF_TYPE) {
-            System.out.println("inside");
+        else if (get(x,y).getType() == Ex2Utils.IF_TYPE) {
             try {
                 return computeIF(ans,x,y);
             } catch (StackOverflowError | Exception e) {
-                System.out.println("inside 2");
+                System.out.println("inside catch");
                 table[x][y].setType(Ex2Utils.ERR_IF);
                 table[x][y].setOrder(Ex2Utils.ERR_IF);
                 return Ex2Utils.ERR_IF_str;
@@ -407,20 +406,25 @@ public class Ex2Sheet implements Sheet {
 
         // If the content is neither text nor a number, then there is a formula that needs to be calculated
         // We will try to calculate it, and catch in case of an error:
-        try {
-            return computeForm(ans, x, y).toString();
-            // We were able to calculate the form!
-        } catch (StackOverflowError e) {
-            // We have infinite recursion - so we have a cell with a circularity error, we will mark it accordingly:
-            table[x][y].setType(Ex2Utils.ERR_CYCLE_FORM);
-            table[x][y].setOrder(Ex2Utils.ERR_CYCLE_FORM);
-            return Ex2Utils.ERR_CYCLE;
-        } catch (Exception e) {
-            // There is an error, so you need to change the type of the cell, and print that there is an error in the cell,
-            // This means that an error message will be displayed in the table itself, not the formula itself that was entered into the cell.
-            get(x,y).setType(Ex2Utils.ERR_FORM_FORMAT);
-            return Ex2Utils.ERR_FORM;
+        else if (get(x,y).getType() == Ex2Utils.FORM) {
+            try {
+                return computeForm(ans, x, y).toString();
+                // We were able to calculate the form!
+            } catch (StackOverflowError e) {
+                // We have infinite recursion - so we have a cell with a circularity error, we will mark it accordingly:
+                table[x][y].setType(Ex2Utils.ERR_CYCLE_FORM);
+                table[x][y].setOrder(Ex2Utils.ERR_CYCLE_FORM);
+                return Ex2Utils.ERR_CYCLE;
+            } catch (Exception e) {
+                // There is an error, so you need to change the type of the cell, and print that there is an error in the cell,
+                // This means that an error message will be displayed in the table itself, not the formula itself that was entered into the cell.
+                get(x,y).setType(Ex2Utils.ERR_FORM_FORMAT);
+                System.out.println("09-04");
+                return Ex2Utils.ERR_FORM;
+            }
         }
+        // if we came here so we got a problem, let's return null:
+        return null;
     }
 
     /**

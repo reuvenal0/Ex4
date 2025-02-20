@@ -322,14 +322,11 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("1+2"));
     }
 
-//        @Test
-//    void IFex4Test() {
-//            System.out.println(TestSheet.computeIF("=if(101+1==102,20,0)",20,0));
-////
-//            // Basic IF conditions
-//            TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
-//            assertEquals("1.0", TestSheet.value(20, 0));
-//    }
+    @Test
+    void IFex4Testplu() {
+            TestSheet.set(20, 0, "=if(1,2,3"); //U0
+            System.out.println(TestSheet.value(20, 0));
+    }
 
 
     @Test

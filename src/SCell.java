@@ -112,7 +112,6 @@ public class SCell implements Cell {
     @Override
     public void setType(int t) {
         type = t;
-        System.out.println("Type set to " + t);
     }
 
     /**

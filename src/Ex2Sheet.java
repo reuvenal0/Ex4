@@ -1,8 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Ex2Sheet implements Sheet {
     Cell[][] table; // 2D array of Cells
@@ -707,9 +704,9 @@ public class Ex2Sheet implements Sheet {
 
                 switch (i) {
                     case 0: return sum(AllCellRange);
-                    case 1: //avrege
-                    case 2: //min
-                    case 3: // max
+                    case 1: return average(AllCellRange);
+                    case 2: return min(AllCellRange);
+                    case 3: return max(AllCellRange);
                 }
             }
         }
@@ -745,6 +742,28 @@ public class Ex2Sheet implements Sheet {
             sum += CellVal;
         }
         return sum;
+    }
+
+    private double average (List<Double> AllCellRange) {
+        double sum = 0;
+        for (Double CellVal : AllCellRange) {
+            sum += CellVal;
+        }
+        return sum/AllCellRange.size();
+    }
+
+    private double min (List<Double> AllCellRange) {
+        if (AllCellRange == null || AllCellRange.isEmpty()) {
+            throw new IllegalArgumentException("No min - list cannot be null or empty");
+        }
+        return Collections.min(AllCellRange);
+    }
+
+    private double max (List<Double> AllCellRange) {
+        if (AllCellRange == null || AllCellRange.isEmpty()) {
+            throw new IllegalArgumentException("No max - list cannot be null or empty");
+        }
+        return Collections.max(AllCellRange);
     }
 
     /**

@@ -652,6 +652,8 @@ public class Ex2Sheet implements Sheet {
         String ifTrue = parts[1].trim();
         String ifFalse = parts[2].trim();
 
+        System.out.println(parts[1]);
+
         CellEntry xyCell = new CellEntry(x, y);
         String toCellName = xyCell.toString();
 
@@ -669,10 +671,17 @@ public class Ex2Sheet implements Sheet {
             SelectedAction = ifFalse;
         }
 
+        System.out.println("SelectedAction is: " + SelectedAction);
+
         SCell result_of_if = new SCell(SelectedAction);
+
+        System.out.println("type is: " + result_of_if.getType());
+
         if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(SelectedAction, x, y));
         else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(SelectedAction));
         else if (result_of_if.getType() == Ex2Utils.TEXT) return SelectedAction;
+        else if (result_of_if.getType() == Ex2Utils.IF_TYPE) return computeIF(SelectedAction, x, y);
+        else if (result_of_if.getType() == Ex2Utils.FUCN_TYPE) return computeFun(SelectedAction, x, y).toString();
         else throw new IllegalArgumentException("Invalid IF format");
     }
 
@@ -692,7 +701,6 @@ public class Ex2Sheet implements Sheet {
 
                 Range2D range = new Range2D(form);
                 if (!range.isValidRange() || range.insideRange(x,y) || !isIn(range.getEndIndex().getX(),range.getEndIndex().getX())) throw new IllegalArgumentException("Invalid range");
-                table[x][y].setType(Ex2Utils.FUCN_TYPE);
                 List<Double> AllCellRange = getRangeCells(range);
 
                 switch (i) {
@@ -714,9 +722,6 @@ public class Ex2Sheet implements Sheet {
             for (int j = range.getStartY(); j <= range.getEndY(); j++) {
                 if (isIn(i,j))
                 {
-                    System.out.println("x: " + i);
-                    System.out.println("y: " + j);
-
                     try {
                         if ((table[i][j].getData() != null) && (!Objects.equals(table[i][j].getData(), ""))) {
                             AllCellRange.add(Double.parseDouble(value(i, j)));

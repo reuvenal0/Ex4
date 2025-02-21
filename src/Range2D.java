@@ -63,9 +63,8 @@ public class Range2D {
             this.StartIndex = new CellEntry(parts[0]);
             this.EndIndex = new CellEntry(parts[1]);
 
-            if (StartIndex.isValid() && EndIndex.isValid()) {
-                if ((StartIndex.getX() > EndIndex.getX()) || StartIndex.getY() > EndIndex.getY()) this.ValidRange = false;
-                else this.ValidRange = true;
+            if (StartIndex.isValid() && EndIndex.isValid() && (StartIndex.getX() <= EndIndex.getX()) && StartIndex.getY() <= EndIndex.getY()) {
+                this.ValidRange = true;
             } else {
                 this.ValidRange = false;
                 this.StartIndex = null;

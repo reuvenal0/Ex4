@@ -904,7 +904,6 @@ public class Ex2Sheet implements Sheet {
                     }
                 }
             }
-            writer.close();
         }
     }
 }

@@ -226,6 +226,15 @@ class Ex2SheetTest {
 
         assertEquals(-1, depths[4][3]); // E3
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 3));
+
+        // Circular Error Detection
+        TestSheet.set(0, 0, "=B0");
+        TestSheet.set(1, 0, "=C0");
+        TestSheet.set(2, 0, "=A0");
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(0, 0));
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 0));
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
+
     }
 
     // tests taken form the first stage, testing 'computeForm' method:
@@ -332,13 +341,10 @@ class Ex2SheetTest {
 
         TestSheet.set(4, 1, "=sum(A0:C1)");
         assertEquals("201.0", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=AVERAGE(A0:C1)");
         assertEquals("50.25", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=maX(A0:C1)");
         assertEquals("75.0", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=Min(A0:C1)");
         assertEquals("25.0", TestSheet.value(4, 1));
 
@@ -347,13 +353,10 @@ class Ex2SheetTest {
 
         TestSheet.set(4, 1, "=sum(A0:A0)");
         assertEquals("-404.0", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=AVERAGE(A0:A0)");
         assertEquals("-404.0", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=maX(A0:A0)");
         assertEquals("-404.0", TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=Min(A0:A0)");
         assertEquals("-404.0", TestSheet.value(4, 1));
 
@@ -362,29 +365,41 @@ class Ex2SheetTest {
 
         TestSheet.set(4, 1, "=sum(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=AVERAGE(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=maX(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
-
         TestSheet.set(4, 1, "=Min(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
 
         // Checking for circular errors - if we define a cell with a range that includes the cell itself - we will get a circular error (unlike IF, which throws an IF error in case of circularity)
         TestSheet.set(0, 0, "=sum(A0:C1)");
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(0, 0));
-
         TestSheet.set(0, 1, "=average(A0:C1)");
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(0, 1));
-
         TestSheet.set(2, 0, "=max(A0:C1)");
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
-
         TestSheet.set(1, 1, "=min(A0:C1)");
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 1));
 
+        // Extreme Values and Overflow
+        TestSheet.set(0, 0, String.valueOf(Double.MAX_VALUE));
+        TestSheet.set(0, 1, String.valueOf(Double.MAX_VALUE));
+        TestSheet.set(4, 1, "=sum(A0:A1)");
+        assertEquals("Infinity", TestSheet.value(4, 1));
+
+        //  Empty Range Handling
+        TestSheet.set(0, 0, "");
+        TestSheet.set(0, 1, "");
+
+        TestSheet.set(4, 1, "=sum(A0:A1)");
+        assertEquals("0.0", TestSheet.value(4, 1));
+        TestSheet.set(4, 1, "=average(A0:A1)");
+        assertEquals("0.0", TestSheet.value(4, 1));
+        TestSheet.set(4, 1, "=min(A0:A1)");
+        assertEquals("0.0", TestSheet.value(4, 1));
+        TestSheet.set(4, 1, "=max(A0:A1)");
+        assertEquals("0.0", TestSheet.value(4, 1));
     }
 
     @Test

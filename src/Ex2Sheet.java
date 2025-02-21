@@ -352,10 +352,16 @@ public class Ex2Sheet implements Sheet {
         for (int i = 0; i < width(); i++) {
             for (int j = 0; j < height(); j++) {
                 if (ans[i][j] == -1) {
-                    if (table[i][j].getData().matches("(?i)^=if\\(.*")) {
+                    String getData_tmp = table[i][j].getData();
+
+                    if (getData_tmp.matches("(?i)^=if\\(.*")) {
                         table[i][j].setType(Ex2Utils.ERR_IF);
                         table[i][j].setOrder(Ex2Utils.ERR_IF);
-                    } else {
+                    } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> getData_tmp.matches("(?i)^=" + func + "\\(.*"))) {
+                        table[i][j].setType(Ex2Utils.ERR_FUNC);
+                        table[i][j].setOrder(Ex2Utils.ERR_FUNC);
+                    }
+                    else {
                         table[i][j].setType(Ex2Utils.ERR_CYCLE_FORM);
                         table[i][j].setOrder(Ex2Utils.ERR_CYCLE_FORM);
                     }
@@ -652,8 +658,6 @@ public class Ex2Sheet implements Sheet {
         String ifTrue = parts[1].trim();
         String ifFalse = parts[2].trim();
 
-        System.out.println(parts[1]);
-
         CellEntry xyCell = new CellEntry(x, y);
         String toCellName = xyCell.toString();
 
@@ -671,11 +675,7 @@ public class Ex2Sheet implements Sheet {
             SelectedAction = ifFalse;
         }
 
-        System.out.println("SelectedAction is: " + SelectedAction);
-
         SCell result_of_if = new SCell(SelectedAction);
-
-        System.out.println("type is: " + result_of_if.getType());
 
         if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(SelectedAction, x, y));
         else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(SelectedAction));

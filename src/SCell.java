@@ -43,7 +43,7 @@ public class SCell implements Cell {
         // We have a formula if the first character is just an '='
         // the test if there is any error in the formula is considered in the spreadsheet class
         else if ((line.charAt(0) == '=') && (!line.startsWith("=if"))
-                && (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> line.startsWith("=" + func))))
+                && (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> line.matches("(?i)^=" + func + "\\(.*"))))
         {
             type = Ex2Utils.FORM;
         }

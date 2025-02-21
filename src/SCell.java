@@ -36,7 +36,7 @@ public class SCell implements Cell {
         } else if (line.matches("(?i)^=if.*")) {
             // this cell is a IF type ??
             type = Ex2Utils.IF_TYPE;
-        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.startsWith("=" + func))) {
+        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.matches("(?i)^=" + func + ".*"))) {
             type = Ex2Utils.FUCN_TYPE;
         }
 

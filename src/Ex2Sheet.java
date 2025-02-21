@@ -184,18 +184,18 @@ public class Ex2Sheet implements Sheet {
                 Cell cell = get(i, j);
                 if (cell != null && cell.getData() != null && !cell.getData().isEmpty()) {
                     // ??
-                    if (cell.getData().startsWith("=if")) {
+                    if (cell.getData().matches("(?i)^=if\\(.*")) {
                         cell.setType(Ex2Utils.IF_TYPE);
                     }
 
-                    if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().startsWith("=" + func))) {
+                    if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().matches("(?i)^=" + func + ".*"))) {
                         cell.setType(Ex2Utils.FUCN_TYPE);
                     }
 
                     // If it starts with '=', it's a formula (until proven otherwise)
                     if (cell.getData().startsWith("=") &&
-                            (!cell.getData().startsWith("=if")) &&
-                            (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().startsWith("=" + func))) )
+                            (!cell.getData().matches("(?i)^=if\\(.*")) &&
+                            (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().matches("(?i)^=" + func + ".*"))) )
                     {
                         cell.setType(Ex2Utils.FORM);
                     }
@@ -352,7 +352,7 @@ public class Ex2Sheet implements Sheet {
         for (int i = 0; i < width(); i++) {
             for (int j = 0; j < height(); j++) {
                 if (ans[i][j] == -1) {
-                    if (table[i][j].getData().startsWith("=if")) {
+                    if (table[i][j].getData().matches("(?i)^=if\\(.*")) {
                         table[i][j].setType(Ex2Utils.ERR_IF);
                         table[i][j].setOrder(Ex2Utils.ERR_IF);
                     } else {
@@ -637,7 +637,7 @@ public class Ex2Sheet implements Sheet {
         // we got to have '=' char at the beginning of the String:
         // we can write 'if' in upper or lower case
         // if must end with ')'
-        if ((!form.startsWith("=if(")) || (!form.endsWith(")"))) {
+        if ((!form.matches("(?i)^=if\\(.*")) || (!form.endsWith(")"))) {
             throw new IllegalArgumentException("Invalid IF format");
         }
 
@@ -685,7 +685,7 @@ public class Ex2Sheet implements Sheet {
         // if must end with ')'
 
         for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
-            if ((form.startsWith("=" + Ex2Utils.FUNCTIONS[i]) && (form.endsWith(")"))))
+            if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ ".*")) && (form.endsWith(")")))
             {
                 int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
                 form = form.substring(selectRMV,form.length()-1);

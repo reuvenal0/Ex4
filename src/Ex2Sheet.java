@@ -137,7 +137,7 @@ public class Ex2Sheet implements Sheet {
                     return Ex2Utils.ERR_FUCN_str;
                 }
                 else if (c.getType() == Ex2Utils.ERR_IF) {
-                    // If there is a IF error inside this Cell then we will print the prefix error String:
+                    // If there is an IF error inside this Cell then we will print the prefix error String:
                     return Ex2Utils.ERR_IF_str;
                 }
 
@@ -418,11 +418,6 @@ public class Ex2Sheet implements Sheet {
             }
         }
 
-//          to-do
-//        table[x][y].setType(Ex2Utils.ERR_FUNC);
-//        table[x][y].setOrder(Ex2Utils.ERR_FUNC);
-//        return Ex2Utils.ERR_FUCN_str;
-
         // If the content is neither text nor a number, then there is a formula that needs to be calculated
         // We will try to calculate it, and catch in case of an error:
         else if (get(x,y).getType() == Ex2Utils.FORM) {
@@ -642,7 +637,7 @@ public class Ex2Sheet implements Sheet {
         // we got to have '=' char at the beginning of the String:
         // we can write 'if' in upper or lower case
         // if must end with ')'
-        if ((!form.toLowerCase().startsWith("=if(")) || (!form.endsWith(")"))) {
+        if ((!form.startsWith("=if(")) || (!form.endsWith(")"))) {
             throw new IllegalArgumentException("Invalid IF format");
         }
 
@@ -667,19 +662,18 @@ public class Ex2Sheet implements Sheet {
         table[x][y].setType(Ex2Utils.IF_TYPE);
 
         // Evaluate condition and return appropriate value
+        String SelectedAction;
         if (evaluateCondition(condition, x, y)) {
-            SCell result_of_if = new SCell(ifTrue);
-            if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifTrue, x, y));
-            else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(ifTrue));
-            else if (result_of_if.getType() == Ex2Utils.TEXT) return ifTrue;
-            else throw new IllegalArgumentException("Invalid IF format");
+            SelectedAction = ifTrue;
         } else {
-            SCell result_of_if = new SCell(ifFalse);
-            if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(ifFalse, x, y));
-            else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(ifFalse));
-            else if (result_of_if.getType() == Ex2Utils.TEXT) return ifFalse;
-            else throw new IllegalArgumentException("Invalid IF format");
+            SelectedAction = ifFalse;
         }
+
+        SCell result_of_if = new SCell(SelectedAction);
+        if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(SelectedAction, x, y));
+        else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(SelectedAction));
+        else if (result_of_if.getType() == Ex2Utils.TEXT) return SelectedAction;
+        else throw new IllegalArgumentException("Invalid IF format");
     }
 
     Double computeFun (String form, int x, int y) {
@@ -690,10 +684,8 @@ public class Ex2Sheet implements Sheet {
         // we can write 'if' in upper or lower case
         // if must end with ')'
 
-        String SelectedFunc = null;
-
         for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
-            if ((form.toLowerCase().startsWith("=" + Ex2Utils.FUNCTIONS[i]) && (form.endsWith(")"))))
+            if ((form.startsWith("=" + Ex2Utils.FUNCTIONS[i]) && (form.endsWith(")"))))
             {
                 int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
                 form = form.substring(selectRMV,form.length()-1);
@@ -730,7 +722,7 @@ public class Ex2Sheet implements Sheet {
                             AllCellRange.add(Double.parseDouble(value(i, j)));
                         }
                     } catch (Exception e) {
-                        throw new IllegalArgumentException("Invalid range - computable (numarical) value only");
+                        throw new IllegalArgumentException("Invalid range - computable (numerical) value only");
                     }
                 }
             }
@@ -783,12 +775,12 @@ public class Ex2Sheet implements Sheet {
         }
         if (selectedOp == null) throw new IllegalArgumentException("Invalid IF format");
 
-        String[] condetionParts = condition.split(selectedOp);
-        if (condetionParts.length != 2) throw new IllegalArgumentException("Invalid IF format");
+        String[] ConditionParts = condition.split(selectedOp);
+        if (ConditionParts.length != 2) throw new IllegalArgumentException("Invalid IF format");
         double val1,val2;
         try {
-            val1 = computeForm("=" + condetionParts[0], x, y);
-            val2 = computeForm("=" + condetionParts[1], x, y);
+            val1 = computeForm("=" + ConditionParts[0], x, y);
+            val2 = computeForm("=" + ConditionParts[1], x, y);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid IF format");
         }

@@ -230,7 +230,7 @@ class Ex2SheetTest {
 
     // tests taken form the first stage, testing 'computeForm' method:
     @Test
-    void computeFormTest() throws ConditionCalculationException, FuncCalculationException {
+    void computeFormTest() {
         // Basic operations
         TestSheet.set(0, 0, "1");  // A0 = 1
         TestSheet.set(1, 0, "2");  // B0 = 2
@@ -322,19 +322,66 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("1+2"));
     }
 
-//    @Test
-//    void functiontest() {
-//        TestSheet.set(0, 0, "98.299");
-//        TestSheet.set(0, 1, "1.701");
-//        TestSheet.set(1, 0, "45.5");
-//        TestSheet.set(1, 1, "55.5");
-//
-//        System.out.println(TestSheet.computeFun("=sum(A0:B1)", 1,1));
-//
-//    }
+    @Test
+    void Functionstest() {
+        // testing standard function (We have empty cells on purpose, we have defined that we do not take these empty cells into account):
+        TestSheet.set(0, 0, "25");
+        TestSheet.set(0, 1, "=A0*3");
+        TestSheet.set(1, 0, "=40+5.5"); // ==45.5
+        TestSheet.set(1, 1, "=55.5*4/2-55.5"); // ==55.5
+
+        TestSheet.set(4, 1, "=sum(A0:C1)");
+        assertEquals("201.0", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=AVERAGE(A0:C1)");
+        assertEquals("50.25", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=maX(A0:C1)");
+        assertEquals("75.0", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=Min(A0:C1)");
+        assertEquals("25.0", TestSheet.value(4, 1));
+
+        // Single Cell range test:
+        TestSheet.set(0, 0, "404");
+
+        TestSheet.set(4, 1, "=sum(A0:A0)");
+        assertEquals("404.0", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=AVERAGE(A0:A0)");
+        assertEquals("404.0", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=maX(A0:A0)");
+        assertEquals("404.0", TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=Min(A0:A0)");
+        assertEquals("404.0", TestSheet.value(4, 1));
+
+        // Adding a test cell Within the range, causes an error:
+        TestSheet.set(0, 0, "Text!!");
+
+        TestSheet.set(4, 1, "=sum(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=AVERAGE(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=maX(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
+
+        TestSheet.set(4, 1, "=Min(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
+
+        // Checking for circular errors - if we define a cell with a range that includes the cell itself - we will get a circular error (unlike IF, which throws an IF error in case of circularity)
+
+
+
+
+
+    }
 
     @Test
-    void IFex4Test() {
+    void ConditionTest() {
         // Basic IF conditions
         TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
         TestSheet.set(20, 1, "=if(U0>3, big,small)"); // U1 = small

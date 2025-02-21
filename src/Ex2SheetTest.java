@@ -343,19 +343,19 @@ class Ex2SheetTest {
         assertEquals("25.0", TestSheet.value(4, 1));
 
         // Single Cell range test:
-        TestSheet.set(0, 0, "404");
+        TestSheet.set(0, 0, "-404");
 
         TestSheet.set(4, 1, "=sum(A0:A0)");
-        assertEquals("404.0", TestSheet.value(4, 1));
+        assertEquals("-404.0", TestSheet.value(4, 1));
 
         TestSheet.set(4, 1, "=AVERAGE(A0:A0)");
-        assertEquals("404.0", TestSheet.value(4, 1));
+        assertEquals("-404.0", TestSheet.value(4, 1));
 
         TestSheet.set(4, 1, "=maX(A0:A0)");
-        assertEquals("404.0", TestSheet.value(4, 1));
+        assertEquals("-404.0", TestSheet.value(4, 1));
 
         TestSheet.set(4, 1, "=Min(A0:A0)");
-        assertEquals("404.0", TestSheet.value(4, 1));
+        assertEquals("-404.0", TestSheet.value(4, 1));
 
         // Adding a test cell Within the range, causes an error:
         TestSheet.set(0, 0, "Text!!");
@@ -373,10 +373,17 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(4, 1));
 
         // Checking for circular errors - if we define a cell with a range that includes the cell itself - we will get a circular error (unlike IF, which throws an IF error in case of circularity)
+        TestSheet.set(0, 0, "=sum(A0:C1)");
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(0, 0));
 
+        TestSheet.set(0, 1, "=average(A0:C1)");
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(0, 1));
 
+        TestSheet.set(2, 0, "=max(A0:C1)");
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
 
-
+        TestSheet.set(1, 1, "=min(A0:C1)");
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 1));
 
     }
 

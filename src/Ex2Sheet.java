@@ -188,14 +188,14 @@ public class Ex2Sheet implements Sheet {
                         cell.setType(Ex2Utils.IF_TYPE);
                     }
 
-                    if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().matches("(?i)^=" + func + ".*"))) {
+                    if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().matches("(?i)^=" + func + "\\(.*"))) {
                         cell.setType(Ex2Utils.FUCN_TYPE);
                     }
 
                     // If it starts with '=', it's a formula (until proven otherwise)
                     if (cell.getData().startsWith("=") &&
                             (!cell.getData().matches("(?i)^=if\\(.*")) &&
-                            (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().matches("(?i)^=" + func + ".*"))) )
+                            (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().matches("(?i)^=" + func + "\\(.*"))) )
                     {
                         cell.setType(Ex2Utils.FORM);
                     }
@@ -694,7 +694,7 @@ public class Ex2Sheet implements Sheet {
         // if must end with ')'
 
         for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
-            if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ ".*")) && (form.endsWith(")")))
+            if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ "\\(.*")) && (form.endsWith(")")))
             {
                 int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
                 form = form.substring(selectRMV,form.length()-1);

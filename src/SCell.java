@@ -33,10 +33,10 @@ public class SCell implements Cell {
             // The cell contains a valid number (Double) if we were able to convert it to a number properly
             // (using a function we created that catches the conversion error if there is an error)
             type = Ex2Utils.NUMBER;
-        } else if (line.matches("(?i)^=if.*")) {
+        } else if (line.matches("(?i)^=if\\(.*")) {
             // this cell is a IF type ??
             type = Ex2Utils.IF_TYPE;
-        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.matches("(?i)^=" + func + ".*"))) {
+        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.matches("(?i)^=" + func + "\\(.*"))) {
             type = Ex2Utils.FUCN_TYPE;
         }
 

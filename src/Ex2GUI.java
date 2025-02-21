@@ -72,7 +72,7 @@ public class Ex2GUI {
 		if(t== Ex2Utils.ERR_CYCLE_FORM) {ans= StdDrawEx2.BOOK_RED;}
 		if(t== Ex2Utils.FUCN_TYPE) {ans = StdDrawEx2.GREEN;}
 		if(t== Ex2Utils.IF_TYPE) {ans = StdDrawEx2.YELLOW;}
-		if(t== Ex2Utils.ERR_FUNC) {ans = StdDrawEx2.DARK_GRAY;}
+		if(t== Ex2Utils.ERR_FUNC) {ans = StdDrawEx2.PINK;}
 		if(t== Ex2Utils.ERR_IF) {ans = StdDrawEx2.MAGENTA;}
 		return ans;
 	}

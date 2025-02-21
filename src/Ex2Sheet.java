@@ -134,7 +134,7 @@ public class Ex2Sheet implements Sheet {
                     return Ex2Utils.ERR_CYCLE;
                 } else if (c.getType() == Ex2Utils.ERR_FUNC) {
                     // If there is a function error inside this Cell then we will print the prefix error String:
-                    return Ex2Utils.ERR_IF_str;
+                    return Ex2Utils.ERR_FUCN_str;
                 }
                 else if (c.getType() == Ex2Utils.ERR_IF) {
                     // If there is a IF error inside this Cell then we will print the prefix error String:
@@ -699,7 +699,8 @@ public class Ex2Sheet implements Sheet {
                 form = form.substring(selectRMV,form.length()-1);
 
                 Range2D range = new Range2D(form);
-                if (!range.isValidRange() || range.insideRange(x,y)) throw new IllegalArgumentException("Invalid range");
+                if (!range.isValidRange() || range.insideRange(x,y) || !isIn(range.getEndIndex().getX(),range.getEndIndex().getX())) throw new IllegalArgumentException("Invalid range");
+                table[x][y].setType(Ex2Utils.FUCN_TYPE);
                 List<Double> AllCellRange = getRangeCells(range);
 
                 switch (i) {
@@ -711,6 +712,7 @@ public class Ex2Sheet implements Sheet {
             }
         }
         // ?? todo אם הגענו עד לפה אז אין מה לחפש כאן
+        table[x][y].setType(Ex2Utils.ERR_FUNC);
         throw new IllegalArgumentException("Invalid function format");
     }
 

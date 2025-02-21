@@ -11,32 +11,44 @@ public class Range2D {
         if (ValidRange) {
             return StartIndex;
         }
-        else {return null;}
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
     public CellEntry getEndIndex() {
         if (ValidRange) {
             return EndIndex;
         }
-        else {return null;}
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
     public int getStartX() {
-        return this.StartIndex.getX();
+        if (ValidRange) {
+            return this.StartIndex.getX();
+        }
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
     public int getEndX() {
-        return this.EndIndex.getX();
+        if (ValidRange) {
+            return this.EndIndex.getX();
+        }
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
 
     public int getStartY() {
-        return this.StartIndex.getY();
+        if (ValidRange) {
+            return this.StartIndex.getY();
+        }
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
 
     public int getEndY() {
-        return this.EndIndex.getY();
+        if (ValidRange) {
+            return this.EndIndex.getY();
+        }
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 
     public Range2D(String range) {
@@ -52,15 +64,21 @@ public class Range2D {
             this.EndIndex = new CellEntry(parts[1]);
 
             if (StartIndex.isValid() && EndIndex.isValid()) {
-                this.ValidRange = true;
+                if ((StartIndex.getX() > EndIndex.getX()) || StartIndex.getY() > EndIndex.getY()) this.ValidRange = false;
+                else this.ValidRange = true;
             } else {
+                this.ValidRange = false;
                 this.StartIndex = null;
                 this.EndIndex = null;
+                throw new IllegalArgumentException("Invalid range");
             }
         }
     }
 
     public boolean insideRange (int x, int y) {
-        return (((getStartX() <= x && x <= getEndX())) && ((getStartY() <= y) && (y <= getEndY())));
+        if (this.ValidRange) {
+            return (((getStartX() <= x && x <= getEndX())) && ((getStartY() <= y) && (y <= getEndY())));
+        }
+        else {throw new IllegalArgumentException("Invalid range");}
     }
 }

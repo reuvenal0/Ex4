@@ -125,6 +125,8 @@ public class Ex2Sheet implements Sheet {
 
             // If the cell is not empty, we continue:
             if (c!=null) {
+                // Let's first see if this cell was marked with an error during a previous calculation:
+
                 if (c.getType() == Ex2Utils.ERR_FORM_FORMAT) {
                 // If there is an error in calculating the formula, then we will print the prefix error String:
                     return Ex2Utils.ERR_FORM;
@@ -144,10 +146,12 @@ public class Ex2Sheet implements Sheet {
                 // We will print the value if the data inside the cell is not empty.
                 if (c.toString() != null)
                 {
+                    // Let's see if there is a periodicity error in the cell calculation now:
                     if (c.getOrder() == Ex2Utils.ERR_CYCLE_FORM) {
                         // If there is a circularity error in the formula inside this Cell then we will print the prefix error String:
                         c.setType(Ex2Utils.ERR_CYCLE_FORM);
-                        ans = Ex2Utils.ERR_CYCLE; return ans;
+                        ans = Ex2Utils.ERR_CYCLE;
+                        return ans;
                     }
                     // Calculate the cell contents:
                     ans = eval(x, y);
@@ -165,13 +169,17 @@ public class Ex2Sheet implements Sheet {
      */
     @Override
     public void eval() {
+        // just for convenience, we will prepare our table size in advance:
+        int width = width();
+        int height = height();
+
         // Calculate the depths (dependency) of all the cells in our spreadsheet:
         int[][] depths = depth();
 
         // Find maximum depth for non-cyclic cells
-        int maxDepth = 0;
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < height(); j++) {
+        int maxDepth = 0; // We will start counting from 0 (a cell with no independence at all) and see if a larger value is found
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 if (depths[i][j] > maxDepth) {
                     maxDepth = depths[i][j];
                 }
@@ -179,20 +187,23 @@ public class Ex2Sheet implements Sheet {
         }
 
         // Reset all formula cells to their original type - This way we can update in case there are now calculation errors:
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < height(); j++) {
+        // We will only need to update the type in cells that may have an error: formulas, conditions, and functions - there is nothing to change about text and numbers.
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 Cell cell = get(i, j);
                 if (cell != null && cell.getData() != null && !cell.getData().isEmpty()) {
-                    // ??
-                    if (cell.getData().matches("(?i)^=if\\(.*")) {
+                    // If it starts with '=if(', it's a condition (until proven otherwise - In case we get an error in the calculation)
+                    if (cell.getData().matches("(?i)^=if\\(.*"))
+                    {
                         cell.setType(Ex2Utils.IF_TYPE);
                     }
 
+                    // If it starts with '=<function>(', it's a function (until proven otherwise - In case we get an error in the calculation)
                     if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> cell.getData().matches("(?i)^=" + func + "\\(.*"))) {
                         cell.setType(Ex2Utils.FUCN_TYPE);
                     }
 
-                    // If it starts with '=', it's a formula (until proven otherwise)
+                    // If it starts with **just** '=', it's a formula (until proven otherwise - In case we get an error in the calculation)
                     if (cell.getData().startsWith("=") &&
                             (!cell.getData().matches("(?i)^=if\\(.*")) &&
                             (Arrays.stream(Ex2Utils.FUNCTIONS).noneMatch(func -> cell.getData().matches("(?i)^=" + func + "\\(.*"))) )
@@ -203,13 +214,13 @@ public class Ex2Sheet implements Sheet {
             }
         }
 
-        // Evaluate cells level by level  based on their depth,
+        // Evaluate cells level by level based on their depth,
         // We will use three loops for this:
         for (int currentDepth = 0; currentDepth <= maxDepth; currentDepth++) // depth loop
         {
-            for (int i = 0; i < width(); i++) // X-cord (width) loop
+            for (int i = 0; i < width; i++) // X-cord (width) loop
             {
-                for (int j = 0; j < height(); j++) // Y-cord (height) loop
+                for (int j = 0; j < height; j++) // Y-cord (height) loop
                 {
                     if (depths[i][j] == currentDepth)
                     {
@@ -217,25 +228,35 @@ public class Ex2Sheet implements Sheet {
                         Cell cell = get(i, j);
                         if (cell != null)
                         {
-                            if (depths[i][j] == Ex2Utils.ERR_CYCLE_FORM) // The depth of the cell is defined in the depth array as a circularity error -
+                            // Let's check the cells marked with a circular error, and mark them with the error appropriate to their cell type.
+                            if (depths[i][j] == Ex2Utils.ERR_CYCLE_FORM)
                             {
+                                // We have defined that any circular error in the case where the cell is a condition or a function - will be defined as an error for that particular cell type, and not just a circular error.
+                                //Therefore, in the case where the cell type in the source is a condition or a function, we will mark a circular error that it has as a specific error for it
+
                                 if (table[i][j].getType() == Ex2Utils.IF_TYPE || table[i][j].getType() == Ex2Utils.ERR_IF) {
+                                    //  we have a condition cell with a circularity error, we will mark it accordingly - ERR_IF:
                                     table[i][j].setType(Ex2Utils.ERR_IF);
                                     table[i][j].setOrder(Ex2Utils.ERR_IF);
                                 }
                                 else if (table[i][j].getType() == Ex2Utils.FUCN_TYPE) {
+                                    //  we have a function cell with a circularity error, we will mark it accordingly - ERR_FUNC:
                                     table[i][j].setType(Ex2Utils.ERR_FUNC);
                                     table[i][j].setOrder(Ex2Utils.ERR_FUNC);
                                 }
                                 else {
-                                    //  we have a cell with a circularity error, we will mark it accordingly:
+                                    //  we have a formula cell with a circularity error, we will mark it accordingly- ERR_CYCLE_FORM:
                                     cell.setOrder(Ex2Utils.ERR_CYCLE_FORM);
                                     cell.setType(Ex2Utils.ERR_CYCLE_FORM);
                                 }
                             }
+                            // If there is no circularity error, we will check that we can calculate the cell correctly, and mark its depth within the cell fields.
                             else {
+                                // Let's try to calculate the value in the cell:
                                 String calculated = eval(i, j);
                                 cell.setOrder(currentDepth); // Set the Cell order
+                                // The string calculated is temporary just so we can see that we can calculate the cell according to its depth correctly.
+                                // We do not use the data that comes out of the EVAL method, to get the final calculated value we have the VALUE method.
                             }
                         }
                     }

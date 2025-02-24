@@ -1,0 +1,4 @@
+I2CS ArielU: SpreadSheet (Ex2) assignment
+0,0,100
+0,1,Hello
+1,0,=A0*2

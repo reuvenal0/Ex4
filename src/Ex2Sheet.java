@@ -910,6 +910,7 @@ public class Ex2Sheet implements Sheet {
         // Searches for the operator within the string:
         for (String op : Ex2Utils.B_OPS) {
             if (condition.contains(op)) {
+                // We found an operator, let's save it and break out of the loop
                 selectedOp = op;
                 break;
             }

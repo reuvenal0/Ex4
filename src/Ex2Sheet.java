@@ -836,9 +836,10 @@ public class Ex2Sheet implements Sheet {
 
     /**
      * Calculates the sum of all numerical values in the provided list.
+     * This method iterates over a list of Double values and accumulates their sum.
      * If the list is null or empty, it returns 0.0.
      * @param AllCellRange A List of Double values to be summed.
-     * @return The sum of all elements in the list, or 0.0 if the list is null or empty.
+     * @return The sum of all elements in the list, or 0.0 if the list is empty.
      */
     private double sum (List<Double> AllCellRange) {
         if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
@@ -855,9 +856,11 @@ public class Ex2Sheet implements Sheet {
     }
 
     /**
-     *
-     * @param AllCellRange
-     * @return
+     * Calculates the average of all numerical values in the provided list.
+     * This method sums all elements in the list and divides the total by the number of elements.
+     * If the list is empty, it returns 0.0.
+     * @param AllCellRange A List of Double values to calculate the average of.
+     * @return The average of all elements in the list, or 0.0 if the list is null or empty.
      */
     private double average (List<Double> AllCellRange) {
         if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;  // In an empty range list, return 0.
@@ -870,45 +873,62 @@ public class Ex2Sheet implements Sheet {
     }
 
     /**
-     *
-     * @param AllCellRange
-     * @return
+     * Finds the minimum value among all numerical values in the provided list.
+     * If the list is empty, it returns 0.0.
+     * @param AllCellRange A List of Double values to find the minimum from.
+     * @return The minimum value in the list, or 0.0 if the list is empty.
      */
     private double min (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
-        return Collections.min(AllCellRange);
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
+        return Collections.min(AllCellRange); // using the collections method
     }
 
     /**
-     *
-     * @param AllCellRange
-     * @return
+     * Finds the maximum value among all numerical values in the provided list.
+     * If the list is empty, it returns 0.0.
+     * @param AllCellRange A List of Double values to find the minimum from.
+     * @return The maximum value in the list, or 0.0 if the list is empty.
      */
     private double max (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
-        return Collections.max(AllCellRange);
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
+        return Collections.max(AllCellRange); // using the collections method
     }
 
     /**
-     *
-     * @param condition
-     * @param x
-     * @param y
-     * @return
+     * This method parses a conditional expression (e.g., "A1*2 > B2") and evaluates it as true or false.
+     * It supports the following operators: <, >, ==, <=, >=, !=.
+     * The operands in the condition can be either numerical values (formula or number).
+     * If the condition format is invalid, or if it references a non-computable value, an error is thrown.
+     * @param condition A String representing the condition to be evaluated (e.g. "A1 > B2").
+     * @param x integer, x-coordinate of the cell.
+     * @param y integer, y-coordinate of the cell.
+     * @return true if the condition is "satisfied", false otherwise.
      */
     private boolean evaluateCondition(String condition, int x, int y) {
-        String selectedOp = null;
+        String selectedOp = null; // the condition operator
+
+        // Searches for the operator within the string:
         for (String op : Ex2Utils.B_OPS) {
             if (condition.contains(op)) {
                 selectedOp = op;
                 break;
             }
         }
+
+        // We will throw an error if we do not find an operator.
         if (selectedOp == null) throw new IllegalArgumentException("Invalid IF format");
 
+        // We will split the string according to the operator
         String[] ConditionParts = condition.split(selectedOp);
+
+        // In case we did not get exactly two parts from the string division by the operator - we will throw an error.
         if (ConditionParts.length != 2) throw new IllegalArgumentException("Invalid IF format");
+
+        // Numeric variables for both parts of the condition
         double val1,val2;
+
+        // We will try to calculate the numerical value of both parts of the condition
+        // - in case of an error in the calculation we will throw an error
         try {
             val1 = computeForm("=" + ConditionParts[0], x, y);
             val2 = computeForm("=" + ConditionParts[1], x, y);
@@ -916,6 +936,7 @@ public class Ex2Sheet implements Sheet {
             throw new IllegalArgumentException("Invalid IF format");
         }
 
+        // We will perform the comparison according to the requested operator - and return True or false value accordingly:
         switch (selectedOp) {
             case "<": return val1 < val2;
             case ">": return val1 > val2;
@@ -923,7 +944,7 @@ public class Ex2Sheet implements Sheet {
             case "<=": return val1 <= val2;
             case ">=": return val1 >= val2;
             case "!=": return val1 != val2;
-            default: throw new IllegalArgumentException("Invalid IF arguments");
+            default: throw new IllegalArgumentException("Invalid IF arguments"); // Operator selection error
         }
     }
 

@@ -294,11 +294,11 @@ public class Ex2Sheet implements Sheet {
             flagC = false; // We will initialize the variable - until one cell is calculated
 
             // Iterate through all cells in the spreadsheet
-            for (int x = 0; x < width(); x++) {
-                for (int y = 0; y < height(); y++) {
-                    Cell cell = get(x, y);
+            for (int x = 0; x < width(); x++) { // width - X loop
+                for (int y = 0; y < height(); y++) { // height - Y loop
+                    Cell cell = get(x, y); // getting the cell in location [x][y]
 
-                    // Skip if cell is null or Text or Number - set depth as 0:
+                    // Skip if cell is null or Text (empty cell data string is set to text) or Number - set depth as 0:
                     if (cell == null || cell.getType() == Ex2Utils.NUMBER || cell.getType() == Ex2Utils.TEXT) {
                         if (ans[x][y] == -1)
                         {
@@ -308,28 +308,28 @@ public class Ex2Sheet implements Sheet {
                             count++;
                             flagC = true;
                         }
-                        continue;
+                        continue; // moving to the next loop iteration - the next cell, since we confirm it depth
                     }
 
-                    // If this cell is still unprocessed (-1)
+                    // If this cell is still unprocessed (-1) and not text or number:
                     if (ans[x][y] == -1)
                     {
                         // Extract the formula
-                        String formula = cell.getData().substring(1);
-                        boolean canProcess = true;
+                        String cell_data = cell.getData().substring(1);
+                        boolean canProcess = true; // temp bool just for this cell depth calculation
                         int maxDepth = 0; // Track the maximum depth of dependencies
 
-                        // Parse the formula to find all referenced cells
-                        for (int i = 0; i < formula.length(); i++) {
-                            if (Character.isLetter(formula.charAt(i))) {
+                        // Iterate the cell string to find all referenced cells
+                        for (int i = 0; i < cell_data.length(); i++) {
+                            if (Character.isLetter(cell_data.charAt(i))) {
                                 int endIndex = i + 1;
                                 // Go over the formula (string) - finding the reference:
-                                while (endIndex < formula.length() && Character.isDigit(formula.charAt(endIndex))) {
+                                while (endIndex < cell_data.length() && Character.isDigit(cell_data.charAt(endIndex))) {
                                     endIndex++;
                                 }
 
                                 // We will extract the reference within the formula:
-                                String ref = formula.substring(i, endIndex);
+                                String ref = cell_data.substring(i, endIndex);
                                 // convert the coordinates:
                                 CellEntry ce = new CellEntry(ref);
                                 int ce_x = ce.getX();
@@ -346,12 +346,12 @@ public class Ex2Sheet implements Sheet {
                                     // Keep track of the maximum depth of referenced cells
                                     maxDepth = Math.max(maxDepth, ans[ce.getX()][ce.getY()]);
                                 }
-
+                                // Skipping the string loop to the end of the cell reference:
                                 i = endIndex - 1;
                             }
                         }
 
-                        // If all dependencies are processed, calculate the cell's depth
+                        // If the cell dependencies are processed, calculate this cell's depth
                         if (canProcess) {
                             ans[x][y] = maxDepth + 1;
                             count++;
@@ -365,30 +365,44 @@ public class Ex2Sheet implements Sheet {
 
             // If we've gone through all possible depths without resolving all cells, we have a cycle:
             if (depth > max) {
-                break;
+                break; // closing the Cells while loop
             }
         }
-        // We will make sure that all the rounded cells are marked: that the value in our array remains -1, meaning that we were unable to calculate it.
-        // Changing their type to ERR_CYCLE_FORM:
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < height(); j++) {
-                if (ans[i][j] == -1) {
-                    String getData_tmp = table[i][j].getData();
+        // We will make sure that all the cycled cells are marked as follows:
+        // that their value in our depth array remains -1, meaning that we were unable to calculate it.
+        // Changing their Cell type to:
+        // - ERR_IF in case of IF cycle
+        // - ERR_FUNC in case of function cycle
+        // - ERR_CYCLE_FORM in case of formula cycle
+        for (int x = 0; x < width(); x++) { // width - X
+            for (int y = 0; y < height(); y++) { // height - Y
+                if (ans[x][y] == -1)
+                {
+                    String getData_tmp = table[x][x].getData(); // getting cell string data
 
-                    if (getData_tmp.matches("(?i)^=if\\(.*")) {
-                        table[i][j].setType(Ex2Utils.ERR_IF);
-                        table[i][j].setOrder(Ex2Utils.ERR_IF);
-                    } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> getData_tmp.matches("(?i)^=" + func + "\\(.*"))) {
-                        table[i][j].setType(Ex2Utils.ERR_FUNC);
-                        table[i][j].setOrder(Ex2Utils.ERR_FUNC);
+                    // case of IF cycle
+                    if (getData_tmp.matches("(?i)^=if\\(.*"))
+                    {
+                        table[x][y].setType(Ex2Utils.ERR_IF);
+                        table[x][y].setOrder(Ex2Utils.ERR_IF);
                     }
+
+                    // case of functionIF cycle
+                    else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> getData_tmp.matches("(?i)^=" + func + "\\(.*"))) {
+                        table[x][y].setType(Ex2Utils.ERR_FUNC);
+                        table[x][y].setOrder(Ex2Utils.ERR_FUNC);
+                    }
+
+                    // case of formula cycle
                     else {
-                        table[i][j].setType(Ex2Utils.ERR_CYCLE_FORM);
-                        table[i][j].setOrder(Ex2Utils.ERR_CYCLE_FORM);
+                        table[x][y].setType(Ex2Utils.ERR_CYCLE_FORM);
+                        table[x][y].setOrder(Ex2Utils.ERR_CYCLE_FORM);
                     }
                 }
             }
         }
+
+        // return depth array we just finished calculating:
         return ans;
     }
 

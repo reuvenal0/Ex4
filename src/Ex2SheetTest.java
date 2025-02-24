@@ -375,12 +375,12 @@ class Ex2SheetTest {
         // Checking for circular errors - if we define a cell with a range that includes the cell itself - we will get a circular error (like IF type Cell, we wil print function error, and not circularity error MSG)
         TestSheet.set(0, 0, "=sum(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 0));
-        TestSheet.set(0, 1, "=average(A0:C1)");
-        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 1));
-        TestSheet.set(2, 0, "=max(A0:C1)");
-        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 0));
-        TestSheet.set(1, 1, "=min(A0:C1)");
+        TestSheet.set(0, 0, "=average(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 0));
+        TestSheet.set(1, 1, "=max(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(1, 1));
+        TestSheet.set(0, 0, "=min(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 0));
 
         // Extreme Values and Overflow
         TestSheet.set(0, 0, String.valueOf(Double.MAX_VALUE));

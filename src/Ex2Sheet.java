@@ -491,7 +491,7 @@ public class Ex2Sheet implements Sheet {
     /**
      * computeForm is a method that Tries to calculate the value of a valid formula, if something fails it throws an error
      * meaning assume we got a valid formula in the string, and throw an error if necessary.
-     * @param form a String contains formula
+     * @param form a String contains formula RAW data
      * @param x integer, x-coordinate of the cell.
      * @param y integer, y-coordinate of the cell.
      * @return The result of the formula - number (Double)!
@@ -676,40 +676,50 @@ public class Ex2Sheet implements Sheet {
     }
 
 
+    /**
+     * this function Calculates the condition, that is, checks whether the condition is true or false, and returns the calculated result - ready to print.
+     * @param form a String condition the raw data of the function type cell
+     * @param x integer, x-coordinate of the cell.
+     * @param y integer, y-coordinate of the cell.
+     * @return the value to print according to the condition
+     */
     String computeIF (String form, int x, int y) {
-        // Handle 'If' function - Ex4 addition:
-
         // empty String isn't valid:
         if ((form == null) || form.isEmpty()) throw new IllegalArgumentException("invalid value");
 
-        // we got to have '=' char at the beginning of the String:
-        // we can write 'if' in upper or lower case
-        // if must end with ')'
+        // For a valid condition string, the string needs to start with "=if(" and end with ")".
+        // We will throw an error if the string does not meet these conditions
+        // let's use matches in order to cover lowercase and uppercase letters together
         if ((!form.matches("(?i)^=if\\(.*")) || (!form.endsWith(")"))) {
             throw new IllegalArgumentException("Invalid IF format");
         }
 
-        form = form.substring(4,form.length()-1); // Remove the '=' char, if necessary we will put it back (recursion)
-        form = form.replaceAll("\\s",""); // We will delete all the space chars in the String.
+        form = form.substring(4,form.length()-1); // Remove the '=' char
+        form = form.replaceAll("\\s",""); // delete all the space chars in the String
 
+        // Split the string by commas - Conditional format
         String[] parts = form.split(",");
+        // If there are not exactly three commas then the condition does not meet the format
         if (parts.length != 3) throw new IllegalArgumentException("Invalid IF format");
+        /*
+         TODO:
+        Support for nested IFs
+        */
 
-        // Extract condition and branches
+        // We will create variables for each part of the condition
         String condition = parts[0].trim();
         String ifTrue = parts[1].trim();
         String ifFalse = parts[2].trim();
 
+        // We will create a CellEntry object to check whether our cell appears within our condition string
+        // in that case we have a circular error - we will throw an error.
         CellEntry xyCell = new CellEntry(x, y);
         String toCellName = xyCell.toString();
-
         if (condition.contains(toCellName) || ifTrue.contains(toCellName) || ifFalse.contains(toCellName)) {
             throw new IllegalArgumentException("Self-referencing IF error");
         }
 
-        table[x][y].setType(Ex2Utils.IF_TYPE);
-
-        // Evaluate condition and return appropriate value
+        // evaluate condition and set the appropriate string result value:
         String SelectedAction;
         if (evaluateCondition(condition, x, y)) {
             SelectedAction = ifTrue;
@@ -717,34 +727,64 @@ public class Ex2Sheet implements Sheet {
             SelectedAction = ifFalse;
         }
 
+        // We will classify what type of data we received in the result, using the methods of the scell class.
         SCell result_of_if = new SCell(SelectedAction);
 
+        // In the case of a formula, we calculate it using the appropriate method:
         if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(SelectedAction, x, y));
+
+        // In the case of a number, let's parse the number to Double, then parse it to String:
         else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(SelectedAction));
+
+        // In the case of a text, let's return the test String as is:
         else if (result_of_if.getType() == Ex2Utils.TEXT) return SelectedAction;
-        else if (result_of_if.getType() == Ex2Utils.IF_TYPE) return computeIF(SelectedAction, x, y);
+
+        // TODO: Support for nested IFs
+//        else if (result_of_if.getType() == Ex2Utils.IF_TYPE) return computeIF(SelectedAction, x, y);
+
+        // In the case of a function, we calculate it using the appropriate method:
         else if (result_of_if.getType() == Ex2Utils.FUCN_TYPE) return computeFun(SelectedAction, x, y).toString();
-        else throw new IllegalArgumentException("Invalid IF format");
+
+        // In case of undefined content type - we will push an error:
+        else throw new IllegalArgumentException("Invalid IF");
     }
 
+    /**
+     * this function Calculates the function, According to the range it receives and according to predefined functions
+     * @param form a String contains the raw data of the function type cell
+     * @param x integer, x-coordinate of the cell.
+     * @param y integer, y-coordinate of the cell.
+     * @return the result of the function calculation
+     */
     Double computeFun (String form, int x, int y) {
         // empty String isn't valid:
         if ((form == null) || form.isEmpty()) throw new IllegalArgumentException("invalid value");
 
-        // we got to have '=' char at the beginning of the String:
-        // we can write 'if' in upper or lower case
-        // if must end with ')'
-
+        // First, we will loop over the various functions that are predefined for us, so we can easily perform our calculations and tests:
         for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
+
+            // For a valid function string, the string needs to start with "=<FUNCTION>(" and end with ")".
+            // We will throw an error if the string does not meet these conditions
+            // let's use matches in order to cover lowercase and uppercase letters together
             if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ "\\(.*")) && (form.endsWith(")")))
             {
+                // We will remove the beginning of the string: "=<FUNCTION>(" and the ")" at the end. so we are left onlt with the range "Xnn:Ynn".
                 int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
                 form = form.substring(selectRMV,form.length()-1);
 
+                // We will create an object of the range, and insert the range we received in the string (according to the format, this is what should remain in the string as we said)
                 Range2D range = new Range2D(form);
+
+                // We will throw an error in the following cases:
+                // - If the string is not formatted correctly / invalid range
+                // - Our cell is within the range - function cycle error
+                // - The range exceeds our table
                 if (!range.isValidRange() || range.insideRange(x,y) || !isIn(range.getEndIndex().getX(),range.getEndIndex().getX())) throw new IllegalArgumentException("Invalid range");
+
+                // We will convert the range to a list, so we can easily perform function calculations on it:
                 List<Double> AllCellRange = getRangeCells(range);
 
+                // The range is correct, so we send it to the appropriate function for calculation:
                 switch (i) {
                     case 0: return sum(AllCellRange);
                     case 1: return average(AllCellRange);
@@ -753,53 +793,97 @@ public class Ex2Sheet implements Sheet {
                 }
             }
         }
-        // ?? todo אם הגענו עד לפה אז אין מה לחפש כאן
+        // In case we get here there is an error, we will define the cell with a function error and throw an error:
         table[x][y].setType(Ex2Utils.ERR_FUNC);
         throw new IllegalArgumentException("Invalid function format");
     }
 
+    /**
+     * This method scans the cells within the defined range, checks if they contain numerical data (A formula, function, condition that returns some numeric value that is not text.),
+     * and collects them as a list of Double values.
+     * If a cell is empty it is ignored!
+     * If a cell contains text which is invalid data -  an error is thrown.
+     * @param range A Range2D object: the area to scan for numerical values
+     * @return A List of Double containing all numerical values within the specified range.
+     */
     private List<Double> getRangeCells (Range2D range) {
+        // first let's creat an ArrayList:
         List<Double> AllCellRange = new ArrayList<>();
-        for (int i = range.getStartX(); i <= range.getEndX(); i++) {
-            for (int j = range.getStartY(); j <= range.getEndY(); j++) {
-                if (isIn(i,j))
+
+        // We will go through all the cells in our range, according to our EX2Sheet class's table.
+        for (int i = range.getStartX(); i <= range.getEndX(); i++) { // X-cord
+            for (int j = range.getStartY(); j <= range.getEndY(); j++) { // Y-cord
+                if (isIn(i,j)) // Making sure we are within range, to avoid an array out of index error
                 {
+                    // We will convert the content we have in this cell
+                    // as long as it is not empty, because an empty cell is defined as text, but we will simply ignore them as we defined
                     try {
                         if ((table[i][j].getData() != null) && (!Objects.equals(table[i][j].getData(), ""))) {
                             AllCellRange.add(Double.parseDouble(value(i, j)));
                         }
-                    } catch (Exception e) {
+                    }
+                    // If we had an error converting to a numeric value of type Double - there is a text cell - we will throw an error:
+                    catch (Exception e) {
                         throw new IllegalArgumentException("Invalid range - computable (numerical) value only");
                     }
                 }
             }
         }
+
+        // We will return the list with all our numeric values"
         return AllCellRange;
     }
 
+    /**
+     * Calculates the sum of all numerical values in the provided list.
+     * If the list is null or empty, it returns 0.0.
+     * @param AllCellRange A List of Double values to be summed.
+     * @return The sum of all elements in the list, or 0.0 if the list is null or empty.
+     */
     private double sum (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
-        double sum = 0;
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
+
+        double sum = 0; // The initial value for the sum is 0.
+
+        // Easily loop through the list in a FOR-EACH loop and add each value to our sum variable.
         for (Double CellVal : AllCellRange) {
             sum += CellVal;
         }
+
+        // return the sum result:
         return sum;
     }
 
+    /**
+     *
+     * @param AllCellRange
+     * @return
+     */
     private double average (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
-        double sum = 0;
-        for (Double CellVal : AllCellRange) {
-            sum += CellVal;
-        }
+        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;  // In an empty range list, return 0.
+
+        double sum = sum(AllCellRange); // We will use our sum method
+
+        // We will return the sum divided by the number of elements in our list
+        // (there can be no division by 0 because we have already returned 0 in case there are no elements in the list)
         return sum/AllCellRange.size();
     }
 
+    /**
+     *
+     * @param AllCellRange
+     * @return
+     */
     private double min (List<Double> AllCellRange) {
         if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         return Collections.min(AllCellRange);
     }
 
+    /**
+     *
+     * @param AllCellRange
+     * @return
+     */
     private double max (List<Double> AllCellRange) {
         if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;
         return Collections.max(AllCellRange);

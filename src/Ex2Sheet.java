@@ -420,11 +420,12 @@ public class Ex2Sheet implements Sheet {
         // If the cell is empty - then we return null
         if(get(x,y) == null) return null;
 
+        // In the case of a cell with a cycle error in the formula calculation - we will return the relevant error.
         if (get(x,y).getType() == Ex2Utils.ERR_CYCLE_FORM) {
             return Ex2Utils.ERR_CYCLE;
         }
 
-        // We will take the data of the cell:
+        // let's take the data of the cell:
         String ans = get(x,y).toString();
 
         // If the cell data is null then we return null:
@@ -435,12 +436,14 @@ public class Ex2Sheet implements Sheet {
             return ans;
         }
 
-        // If the type of data inside the Cell is number, then we don't need to make any Calculations on the number:
-        // We'll just convert it to a double and then return it to a string because that's the format of the method
+        // If the type of data inside the Cell is number, then we don't need to make any Calculations on the number,
+        // just convert it to a double and then return it to a string because that's the format of our method:
         if (get(x,y).getType() == Ex2Utils.NUMBER) {
             return Double.toString(Double.parseDouble(get(x,y).getData()));
         }
-        // ?? אולי יש לנו כאן תנאי - נחשב אותו ונחזיר שגיאת תנאי בכל מצב שמשהו משתבש
+
+        // If the cell type is an IF condition, we will try to calculate it using our condition calculation method.
+        // Any error that occurs during the calculation will cause the cell to change type to a condition error.
         else if (get(x,y).getType() == Ex2Utils.IF_TYPE) {
             try {
                 return computeIF(ans,x,y);
@@ -449,6 +452,9 @@ public class Ex2Sheet implements Sheet {
                 table[x][y].setOrder(Ex2Utils.ERR_IF);
                 return Ex2Utils.ERR_IF_str;
             }
+
+        // If the cell type is a function, we will try to calculate it using our function calculation method.
+        // Any error that occurs during the calculation will cause the cell to change type to a function error.
         } else if (get(x, y).getType() == Ex2Utils.FUCN_TYPE) {
             try {
                 return computeFun(ans,x,y).toString();
@@ -459,12 +465,11 @@ public class Ex2Sheet implements Sheet {
             }
         }
 
-        // If the content is neither text nor a number, then there is a formula that needs to be calculated
-        // We will try to calculate it, and catch in case of an error:
+        // If the cell type is a formula, we will try to calculate it using our formula calculation method.
+        // We will try to calculate it, and catch in case of errors:
         else if (get(x,y).getType() == Ex2Utils.FORM) {
             try {
-                return computeForm(ans, x, y).toString();
-                // We were able to calculate the form!
+                return computeForm(ans, x, y).toString(); // We were able to calculate the form!
             } catch (StackOverflowError e) {
                 // We have infinite recursion - so we have a cell with a circularity error, we will mark it accordingly:
                 table[x][y].setType(Ex2Utils.ERR_CYCLE_FORM);
@@ -477,7 +482,9 @@ public class Ex2Sheet implements Sheet {
                 return Ex2Utils.ERR_FORM;
             }
         }
-        // if we came here so we got a problem, let's return null:
+
+
+        // if we came here so we got a problem (Cell type isn't defined properly), let's return null:
         return null;
     }
 

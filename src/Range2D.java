@@ -120,6 +120,10 @@ public class Range2D {
         }
     }
 
+    /**
+     * Invalidates the range and throws an IllegalArgumentException.
+     * Used when the range is invalid.
+     */
     private void error_throw () {
         // Invalidate the range if checks fail
         this.ValidRange = false;

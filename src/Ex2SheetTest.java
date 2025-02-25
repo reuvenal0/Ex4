@@ -9,7 +9,7 @@ class Ex2SheetTest {
 
     // let's test the constructors:
     @Test
-    void constructors() {
+    void constructors_Test() {
         // invalid spreadsheet dimensions
         assertThrows(IllegalArgumentException.class, () -> new Ex2Sheet(-1, 5));
         assertThrows(IllegalArgumentException.class, () -> new Ex2Sheet(5, -1));
@@ -28,7 +28,7 @@ class Ex2SheetTest {
     // indexOfMainOp(String form), BracketEndInd(String form), getOperatorPriority(char operator)
     // more complex test on computeForm will be in the following tests method (taken form first stage tests...)
     @Test
-    void set() {
+    void set_Test() {
         TestSheet.set(8,2,"text cell"); // text type cell
 
         TestSheet.set(0, 0, "100"); // A0
@@ -102,7 +102,7 @@ class Ex2SheetTest {
     }
 
     @Test
-    void getByIndexTest() {
+    void getByIndex_Test() {
         // Test valid coordinates with different cell types
         TestSheet.set(0, 0, "Hello"); // Text cell
         TestSheet.set(0, 1, "123"); // Number cell
@@ -136,7 +136,7 @@ class Ex2SheetTest {
     }
 
     @Test
-    void getByCordTest() {
+    void getByCord_Test() {
         // Set up test cells with different types of content
         TestSheet.set(0, 0, "Text"); // A0
         TestSheet.set(1, 0, "123"); // B0
@@ -176,16 +176,16 @@ class Ex2SheetTest {
 
     // default spreadsheet constructor was tested already checked before...So there we check these functions again:
     @Test
-    void width() {
+    void width_Test() {
         assertEquals(TestSheet.width(), 26);
     }
     @Test
-    void height() {
+    void height_Test() {
         assertEquals(TestSheet.height(), 100);
     }
 
     @Test
-    void isIn() {
+    void isIn_Test() {
         assertTrue(TestSheet.isIn(0, 0));
         assertTrue(TestSheet.isIn(25, 98));
 
@@ -196,7 +196,7 @@ class Ex2SheetTest {
     }
 
     @Test
-    void depth() {
+    void depth_Test() {
         // Test depth calculations
         TestSheet.set(0, 20, "5"); // A20: depth 0
         TestSheet.set(1, 20, "=A20+1"); // B20: depth 1
@@ -235,7 +235,7 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 0));
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
 
-        //depth With Range - Check depth calculation with range references
+        //depth With Range - Check depth calculation with range references on function cells
         TestSheet.set(5, 0, "10"); // F0: depth 0
         TestSheet.set(6, 0, "20"); // G0: depth 0
         TestSheet.set(7, 0, "=SUM(F0:G0)"); // H0: depth 1
@@ -247,11 +247,23 @@ class Ex2SheetTest {
         assertEquals(1, depths[7][0]); // H0
         assertEquals(2, depths[8][0]); // I0
 
+        //depth With IF - Check depth calculation with condition cells
+        TestSheet.set(5, 0, "10"); // F0: depth 0
+        TestSheet.set(6, 0, "20"); // G0: depth 0
+        TestSheet.set(7, 0, "=IF(F0 > 5, G0, 0)"); // H0: depth 1
+        TestSheet.set(8, 0, "=IF(H0 > 10, H0+1, F0)"); // I0: depth 2
+
+        depths = TestSheet.depth();
+        assertEquals(0, depths[5][0]); // F0
+        assertEquals(0, depths[6][0]); // G0
+        assertEquals(1, depths[7][0]); // H0
+        assertEquals(2, depths[8][0]); // I0
+
     }
 
     // tests taken form the first stage, testing 'computeForm' method:
     @Test
-    void computeFormTest() {
+    void computeForm_Test() {
         // Basic operations
         TestSheet.set(0, 0, "1");  // A0 = 1
         TestSheet.set(1, 0, "2");  // B0 = 2
@@ -314,7 +326,7 @@ class Ex2SheetTest {
 
     // tests taken form the first stage, on mainOpTests:
     @Test
-    void mainOpTests() {
+    void mainOp_Tests() {
         // Testing the index of the main operator
         assertEquals(1, TestSheet.indexOfMainOp("1+2"));
         assertEquals(1, TestSheet.indexOfMainOp("1-2"));
@@ -334,7 +346,7 @@ class Ex2SheetTest {
 
     // tests taken form the first stage, on bracketEndIndTest:
     @Test
-    void bracketEndIndTest() {
+    void bracketEndInd_Test() {
         assertEquals(3, TestSheet.BracketEndInd("1+2)"));
         assertEquals(5, TestSheet.BracketEndInd("(1+2))"));
         assertEquals(7, TestSheet.BracketEndInd("((1+2)))"));
@@ -344,7 +356,7 @@ class Ex2SheetTest {
     }
 
     @Test
-    void Functionstest() {
+    void Functions_Test() {
         // testing standard function (We have empty cells on purpose, we have defined that we do not take these empty cells into account):
         TestSheet.set(0, 0, "25");
         TestSheet.set(0, 1, "=A0*3");
@@ -415,9 +427,9 @@ class Ex2SheetTest {
 
         // invalid Range test:
         TestSheet.set(2, 0, "=SUM(A0:A1000)"); // C0
-        TestSheet.set(2, 1, "=AVERAGE(A0:A1000)"); // C1
-        TestSheet.set(2, 2, "=MAX(A0:A1000)"); // C2
-        TestSheet.set(2, 3, "=MIN(A0:A1000)"); // C3
+        TestSheet.set(2, 1, "=AVERAGE(A!0:A-100)"); // C1
+        TestSheet.set(2, 2, "=MAX(A0::A1000)"); // C2
+        TestSheet.set(2, 3, "=MIN(A0,A1000)"); // C3
 
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 0));
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 1));
@@ -452,12 +464,7 @@ class Ex2SheetTest {
     }
 
     @Test
-    void ifConditionComplexTests() {
-
-    }
-
-    @Test
-    void ConditionTest() {
+    void Condition_Test() {
         // Basic IF conditions
         TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
         TestSheet.set(20, 1, "=if(U0>3, big,small)"); // U1 = small
@@ -511,7 +518,7 @@ class Ex2SheetTest {
 
     // let's test the I/O methods:
     @Test
-    void Save_LoadTest() throws IOException {
+    void Save_Load_Test() throws IOException {
         String test_file = "Save_LoadTest.txt";
         // Set up some test data:
         TestSheet.set(0, 0, "100"); // A0 - Number

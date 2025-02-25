@@ -96,10 +96,7 @@ public class Range2D {
     public Range2D(String range) {
         if (range == null || range.isEmpty())  //empty String is invalid
         {
-            // Invalidate the range if checks fail
-            this.ValidRange = false;
-            // Throw exception for an invalid range
-            throw new IllegalArgumentException("Invalid range");
+            error_throw();
         }
 
         // Split the range string by ":" to separate start and end indices
@@ -116,14 +113,20 @@ public class Range2D {
                 // Set the range as valid if all checks pass
                 this.ValidRange = true;
             } else {
-                // Invalidate the range if checks fail
-                this.ValidRange = false;
-                this.StartIndex = null;
-                this.EndIndex = null;
-                // Throw exception for an invalid range
-                throw new IllegalArgumentException("Invalid range");
+                error_throw();
             }
+        } else {
+            error_throw();
         }
+    }
+
+    private void error_throw () {
+        // Invalidate the range if checks fail
+        this.ValidRange = false;
+        this.StartIndex = null;
+        this.EndIndex = null;
+        // Throw exception for an invalid range
+        throw new IllegalArgumentException("Invalid range");
     }
 
     /**
@@ -134,7 +137,7 @@ public class Range2D {
      * @throws IllegalArgumentException if the range is invalid.
      */
     public boolean insideRange (int x, int y) {
-        if (this.ValidRange) {
+        if (this.ValidRange) {  // Check if the range is valid before performing containment check
             return (((getStartX() <= x && x <= getEndX())) && ((getStartY() <= y) && (y <= getEndY())));
         }
         else {throw new IllegalArgumentException("Invalid range");}

@@ -103,6 +103,5 @@ public class Range2DTests {
             new Range2D("A1:BZ3");
         });
         assertEquals("Invalid range", exception3.getMessage());
-
     }
 }

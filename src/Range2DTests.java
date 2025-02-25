@@ -12,21 +12,37 @@ public class Range2DTests {
      */
     @Test
     public void testValidRange() {
-        Range2D range = new Range2D("A1:B2");
+        Range2D range_One = new Range2D("A1:B2");
         // Range should be valid
-        assertTrue(range.isValidRange());
+        assertTrue(range_One.isValidRange());
         // Start X should be 1
-        assertEquals(0, range.getStartX());
+        assertEquals(0, range_One.getStartX());
         // End X should be 2
-        assertEquals(1, range.getEndX());
+        assertEquals(1, range_One.getEndX());
         // Start Y should be 1
-        assertEquals(1, range.getStartY());
+        assertEquals(1, range_One.getStartY());
         // End Y should be 2
-        assertEquals(2, range.getEndY());
-        // Point should be inside range
-        assertTrue(range.insideRange(1, 1));
-        // Point should be outside range
-        assertFalse(range.insideRange(3, 3));
+        assertEquals(2, range_One.getEndY());
+        // Point should be inside range_One
+        assertTrue(range_One.insideRange(1, 1));
+        // Point should be outside range_One
+        assertFalse(range_One.insideRange(3, 3));
+
+        Range2D rangeTWO = new Range2D("Y1:Z88");
+        // Range should be valid
+        assertTrue(rangeTWO.isValidRange());
+        // Start X should be 1
+        assertEquals(24, rangeTWO.getStartX());
+        // End X should be 2
+        assertEquals(25, rangeTWO.getEndX());
+        // Start Y should be 1
+        assertEquals(1, rangeTWO.getStartY());
+        // End Y should be 2
+        assertEquals(88, rangeTWO.getEndY());
+        // Point should be inside rangeTWO
+        assertTrue(rangeTWO.insideRange(24, 40));
+        // Point should be outside rangeTWO
+        assertFalse(rangeTWO.insideRange(0, 1));
     }
 
     /**

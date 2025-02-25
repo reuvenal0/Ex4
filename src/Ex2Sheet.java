@@ -935,16 +935,7 @@ public class Ex2Sheet implements Sheet {
                     int y = Integer.parseInt(parts[1].trim());
 
                     // Extract cell content and clean it
-                    String content = parts[2];
-
-                    // If content contains a comma, take only the part before the first comma after position 2
-                    int commaIndex = content.indexOf(',');
-                    if (commaIndex != -1) {
-                        content = content.substring(0, commaIndex);
-                    }
-
-                    // delete extra spaces
-                    content = content.trim();
+                    String content = parts[2].trim();
 
                     // Set cell content if coordinates are valid
                     if (isIn(x, y)) {

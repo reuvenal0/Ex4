@@ -1,4 +1,13 @@
 I2CS ArielU: SpreadSheet (Ex4) assignment
 0,0,100
 0,1,Hello
+0,10,=SUM(A11:C11)
+0,11,100
 1,0,=A0*2
+1,11,=IF(1==1,Hi,not)
+2,2,800
+2,3,=MIN(A0:B0)
+2,11,22
+3,2,=((C2/4)+5)*3
+3,3,=IF(A0 <= B0, 404, 0)
+5,11,this is a demo!

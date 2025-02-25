@@ -413,6 +413,17 @@ class Ex2SheetTest {
         TestSheet.set(4, 1, "=max(A0:A1)");
         assertEquals("0.0", TestSheet.value(4, 1));
 
+        // invalid Range test:
+        TestSheet.set(2, 0, "=SUM(A0:A1000)"); // C0
+        TestSheet.set(2, 1, "=AVERAGE(A0:A1000)"); // C1
+        TestSheet.set(2, 2, "=MAX(A0:A1000)"); // C2
+        TestSheet.set(2, 3, "=MIN(A0:A1000)"); // C3
+
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 0));
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 1));
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 2));
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 3));
+
         // function circular error test:
         TestSheet.set(5, 0, "=SUM(G0:H1)"); // F0 depends on G0, G1, H0, H1
         TestSheet.set(6, 0, "=F0*2"); // G0 depends on F0
@@ -430,9 +441,18 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(5, 0));
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(6, 0));
 
+        // typo in function name - cell type is set as formula:
+        TestSheet.set(4, 1, "=summm(A0:C1)");
+        assertEquals(Ex2Utils.ERR_FORM, TestSheet.value(4, 1));
+
 //        todo:
 //        TestSheet.set(6, 1, "=MAX(F0:F2) - MIN(F0:F2)");
 //        assertEquals("20.0", TestSheet.value(6, 1));
+
+    }
+
+    @Test
+    void ifConditionComplexTests() {
 
     }
 
@@ -452,6 +472,14 @@ class Ex2SheetTest {
         assertEquals("20.0", TestSheet.value(20, 6));
         assertEquals("100.0", TestSheet.value(20, 7));
         assertEquals("300.0", TestSheet.value(20, 2));
+
+        TestSheet.set(1, 0, "=if(1+1==2, 100, 200)"); // B0 = 100.0
+        TestSheet.set(1, 1, "=if(2*3>5, 300, 400)"); // B1 = 300.0
+        TestSheet.set(1, 2, "=if((2+2)*2<=8, 500, 600)"); // B2 = 500.0
+
+        assertEquals("100.0", TestSheet.value(1, 0));
+        assertEquals("300.0", TestSheet.value(1, 1));
+        assertEquals("500.0", TestSheet.value(1, 2));
 
         // IF with references
         TestSheet.set(20, 7, "=if(U5<U6,30,-101)"); //U7 = 30
@@ -486,9 +514,18 @@ class Ex2SheetTest {
     void Save_LoadTest() throws IOException {
         String test_file = "Save_LoadTest.txt";
         // Set up some test data:
-        TestSheet.set(0, 0, "100"); // Number
-        TestSheet.set(0, 1, "Hello"); // Text
-        TestSheet.set(1, 0, "=A0*2"); // Formula
+        TestSheet.set(0, 0, "100"); // A0 - Number
+        TestSheet.set(0, 1, "Hello"); // A1 - Text
+        TestSheet.set(0, 10, "=SUM(A11:C11)"); // A10 - Sum function with range
+        TestSheet.set(0, 11, "100"); // A11 - Number
+        TestSheet.set(1, 0, "=A0*2"); // B0 - Formula
+        TestSheet.set(1, 11, "=IF(1==1,Hi,not)"); // B11 - Condition
+        TestSheet.set(2, 2, "800"); // C2 - Number
+        TestSheet.set(2, 3, "=MIN(A0:B0)"); // C3 - MIN function
+        TestSheet.set(2, 11, "22"); // C11 - Number
+        TestSheet.set(3, 2, "=((C2/4)+5)*3"); // D2 - Complex formula
+        TestSheet.set(3, 3, "=IF(A0 <= B0, 404, 0)"); // D3 - Condition
+        TestSheet.set(5, 11, "this is a demo!"); // F11 - Text
 
         // Save the test spreadsheet
         TestSheet.save(test_file);
@@ -501,9 +538,16 @@ class Ex2SheetTest {
         TestSheet.load(test_file);
 
         // Verify the loaded data
-        assertEquals("100.0", TestSheet.value(0, 0));
-        assertEquals("Hello", TestSheet.value(0, 1));
-        assertEquals("200.0", TestSheet.value(1, 0));
-        assertEquals(Ex2Utils.EMPTY_CELL, TestSheet.value(2, 0));
+        assertEquals("100.0", TestSheet.value(0, 0)); // A0 - Number
+        assertEquals("Hello", TestSheet.value(0, 1)); // A1 - Text
+        assertEquals("100.0", TestSheet.value(0, 11)); // A11 - Number
+        assertEquals("Hi", TestSheet.value(1, 11)); // B11 - Condition result
+        assertEquals("800.0", TestSheet.value(2, 2)); // C2 - Number
+        assertEquals("100.0", TestSheet.value(2, 3)); // C3 - MIN function result
+        assertEquals("22.0", TestSheet.value(2, 11)); // C11 - Number
+        assertEquals("615.0", TestSheet.value(3, 2)); // D2 - Complex formula result
+        assertEquals("404.0", TestSheet.value(3, 3)); // D3 - Condition result
+        assertEquals("this is a demo!", TestSheet.value(5, 11)); // F11 - Text
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 10)); // A10 - Sum(A11:C11) result
     }
 }

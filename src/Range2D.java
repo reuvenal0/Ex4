@@ -94,10 +94,7 @@ public class Range2D {
      * @throws IllegalArgumentException if the range is invalid.
      */
     public Range2D(String range) {
-        if (range == null || range.isEmpty())  //empty String is invalid
-        {
-            error_throw();
-        }
+        if (range == null || range.isEmpty()) error_throw(); //empty String is invalid
 
         // Split the range string by ":" to separate start and end indices
         String[] parts = range.split(":");
@@ -112,12 +109,13 @@ public class Range2D {
             if (StartIndex.isValid() && EndIndex.isValid() && (StartIndex.getX() <= EndIndex.getX()) && StartIndex.getY() <= EndIndex.getY()) {
                 // Set the range as valid if all checks pass
                 this.ValidRange = true;
-            } else {
-                error_throw();
+
+                // We have completed all validation of the range - we can close this constructor:
+                return;
             }
-        } else {
-            error_throw();
         }
+        // If we get here then the range we received is invalid - we will throw an error:
+        error_throw();
     }
 
     /**

@@ -235,6 +235,18 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 0));
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
 
+        //depth With Range - Check depth calculation with range references
+        TestSheet.set(5, 0, "10"); // F0: depth 0
+        TestSheet.set(6, 0, "20"); // G0: depth 0
+        TestSheet.set(7, 0, "=SUM(F0:G0)"); // H0: depth 1
+        TestSheet.set(8, 0, "=H0+1"); // I0: depth 2
+
+        depths = TestSheet.depth();
+        assertEquals(0, depths[5][0]); // F0
+        assertEquals(0, depths[6][0]); // G0
+        assertEquals(1, depths[7][0]); // H0
+        assertEquals(2, depths[8][0]); // I0
+
     }
 
     // tests taken form the first stage, testing 'computeForm' method:
@@ -400,6 +412,28 @@ class Ex2SheetTest {
         assertEquals("0.0", TestSheet.value(4, 1));
         TestSheet.set(4, 1, "=max(A0:A1)");
         assertEquals("0.0", TestSheet.value(4, 1));
+
+        // function circular error test:
+        TestSheet.set(5, 0, "=SUM(G0:H1)"); // F0 depends on G0, G1, H0, H1
+        TestSheet.set(6, 0, "=F0*2"); // G0 depends on F0
+        TestSheet.set(7, 1, "=G0+3"); // H1 depends on G0
+
+        // the function cell should return ERR_FUNC, the formula cycle should return ERR_CYCLE
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(5, 0));
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(6, 0));
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(7, 1));
+
+        // overlapping ranges causing circular reference:
+        TestSheet.set(5, 0, "=SUM(G0:H0)"); // F0
+        TestSheet.set(6, 0, "=SUM(F0:H0)"); // G0
+        // Both should detect circular reference = ERR_FUNC
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(5, 0));
+        assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(6, 0));
+
+//        todo:
+//        TestSheet.set(6, 1, "=MAX(F0:F2) - MIN(F0:F2)");
+//        assertEquals("20.0", TestSheet.value(6, 1));
+
     }
 
     @Test

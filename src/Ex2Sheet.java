@@ -146,8 +146,8 @@ public class Ex2Sheet implements Sheet {
                 // We will print the value if the data inside the cell is not empty.
                 if (c.toString() != null)
                 {
-                    // Let's see if there is a periodicity error in the cell calculation now:
-                    if (c.getOrder() == Ex2Utils.ERR_CYCLE_FORM) {
+                    // Let's see if there is a depth error in the formula cells calculation now:
+                    if ((c.getOrder() == Ex2Utils.ERR_CYCLE_FORM) && (c.getType() == Ex2Utils.FORM)) {
                         // If there is a circularity error in the formula inside this Cell then we will print the prefix error String:
                         c.setType(Ex2Utils.ERR_CYCLE_FORM);
                         ans = Ex2Utils.ERR_CYCLE;
@@ -387,7 +387,7 @@ public class Ex2Sheet implements Sheet {
                         table[x][y].setOrder(Ex2Utils.ERR_IF);
                     }
 
-                    // case of functionIF cycle
+                    // case of function cycle
                     else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> getData_tmp.matches("(?i)^=" + func + "\\(.*"))) {
                         table[x][y].setType(Ex2Utils.ERR_FUNC);
                         table[x][y].setOrder(Ex2Utils.ERR_FUNC);
@@ -786,10 +786,10 @@ public class Ex2Sheet implements Sheet {
 
                 // The range is correct, so we send it to the appropriate function for calculation:
                 switch (i) {
-                    case 0: return sum(AllCellRange);
-                    case 1: return average(AllCellRange);
-                    case 2: return min(AllCellRange);
-                    case 3: return max(AllCellRange);
+                    case 0: return Ex2Utils.sum(AllCellRange);
+                    case 1: return Ex2Utils.average(AllCellRange);
+                    case 2: return Ex2Utils.min(AllCellRange);
+                    case 3: return Ex2Utils.max(AllCellRange);
                 }
             }
         }
@@ -834,65 +834,6 @@ public class Ex2Sheet implements Sheet {
         return AllCellRange;
     }
 
-    /**
-     * Calculates the sum of all numerical values in the provided list.
-     * This method iterates over a list of Double values and accumulates their sum.
-     * If the list is null or empty, it returns 0.0.
-     * @param AllCellRange A List of Double values to be summed.
-     * @return The sum of all elements in the list, or 0.0 if the list is empty.
-     */
-    private double sum (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
-
-        double sum = 0; // The initial value for the sum is 0.
-
-        // Easily loop through the list in a FOR-EACH loop and add each value to our sum variable.
-        for (Double CellVal : AllCellRange) {
-            sum += CellVal;
-        }
-
-        // return the sum result:
-        return sum;
-    }
-
-    /**
-     * Calculates the average of all numerical values in the provided list.
-     * This method sums all elements in the list and divides the total by the number of elements.
-     * If the list is empty, it returns 0.0.
-     * @param AllCellRange A List of Double values to calculate the average of.
-     * @return The average of all elements in the list, or 0.0 if the list is null or empty.
-     */
-    private double average (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0;  // In an empty range list, return 0.
-
-        double sum = sum(AllCellRange); // We will use our sum method
-
-        // We will return the sum divided by the number of elements in our list
-        // (there can be no division by 0 because we have already returned 0 in case there are no elements in the list)
-        return sum/AllCellRange.size();
-    }
-
-    /**
-     * Finds the minimum value among all numerical values in the provided list.
-     * If the list is empty, it returns 0.0.
-     * @param AllCellRange A List of Double values to find the minimum from.
-     * @return The minimum value in the list, or 0.0 if the list is empty.
-     */
-    private double min (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
-        return Collections.min(AllCellRange); // using the collections method
-    }
-
-    /**
-     * Finds the maximum value among all numerical values in the provided list.
-     * If the list is empty, it returns 0.0.
-     * @param AllCellRange A List of Double values to find the minimum from.
-     * @return The maximum value in the list, or 0.0 if the list is empty.
-     */
-    private double max (List<Double> AllCellRange) {
-        if (AllCellRange == null || AllCellRange.isEmpty()) return 0.0; // In an empty range list, return 0.
-        return Collections.max(AllCellRange); // using the collections method
-    }
 
     /**
      * This method parses a conditional expression (e.g., "A1*2 > B2") and evaluates it as true or false.
@@ -948,8 +889,6 @@ public class Ex2Sheet implements Sheet {
             default: throw new IllegalArgumentException("Invalid IF arguments"); // Operator selection error
         }
     }
-
-
 
     /**
      * Load the content of a saved SpreadSheet into this SpreadSheet.
@@ -1037,7 +976,7 @@ public class Ex2Sheet implements Sheet {
     public void save(String fileName) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             // Write the header line
-            writer.write("I2CS ArielU: SpreadSheet (Ex2) assignment");
+            writer.write("I2CS ArielU: SpreadSheet (Ex4) assignment");
             writer.newLine();
 
             // loop through the SpreadSheet:

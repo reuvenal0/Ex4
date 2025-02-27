@@ -457,6 +457,15 @@ class Ex2SheetTest {
         TestSheet.set(4, 1, "=summm(A0:C1)");
         assertEquals(Ex2Utils.ERR_FORM, TestSheet.value(4, 1));
 
+        // testing range that is out of the table, let's create a smaller table (additional range tests are on the 'Range2DTest' file):
+        Ex2Sheet SmallTable = new Ex2Sheet(10,10);
+        SmallTable.set(0,0,"1");
+        SmallTable.set(2,0,"=max(A0:A11)"); // index out of table
+        SmallTable.set(2,1,"=max(R0:Y08)"); // index out of table
+        assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 0));
+        assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 1));
+
+
 //        todo:
 //        TestSheet.set(6, 1, "=MAX(F0:F2) - MIN(F0:F2)");
 //        assertEquals("20.0", TestSheet.value(6, 1));

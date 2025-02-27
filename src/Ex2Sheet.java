@@ -778,8 +778,10 @@ public class Ex2Sheet implements Sheet {
                 // We will throw an error in the following cases:
                 // - If the string is not formatted correctly / invalid range
                 // - Our cell is within the range - function cycle error
-                // - The range exceeds our table
-                if (!range.isValidRange() || range.insideRange(x,y) || !isIn(range.getEndIndex().getX(),range.getEndIndex().getX())) throw new IllegalArgumentException("Invalid range");
+                // - The range is inside our table (It is enough to check the last index and if it does not exceed then the starting index must also be smaller than it so it does not exceed)
+                if (!range.isValidRange() || range.insideRange(x,y) || !isIn(range.getEndX(),range.getEndY())) {
+                    throw new IllegalArgumentException("Invalid range");
+                }
 
                 // We will convert the range to a list, so we can easily perform function calculations on it:
                 List<Double> AllCellRange = getRangeCells(range);

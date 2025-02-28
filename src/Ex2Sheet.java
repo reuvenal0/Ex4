@@ -904,26 +904,28 @@ public class Ex2Sheet implements Sheet {
      */
     @Override
     public void load(String fileName) throws IOException {
+        // Create a BufferedReader to read lines from the file (try-catch in case of error)
         try (BufferedReader loader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            int lineCount = 0;
+            String line; // the Cell raw data.
+            int lineCount = 0; // line counter.
 
-            // Reset all cells to empty
+            // Reset all cells to empty cell:
             for (int i = 0; i < width(); i++) {
                 for (int j = 0; j < height(); j++) {
-                    table[i][j] = new SCell("");
+                    table[i][j] = new SCell(Ex2Utils.EMPTY_CELL);
                 }
             }
 
+            // Read the file line by line
             while ((line = loader.readLine()) != null) {
-                lineCount++;
+                lineCount++; // Starting the line count form 1: first line (header) is 1.
 
                 // Skip header line
                 if (lineCount == 1) {
                     continue;
                 }
 
-                // Split only for the first three parts (x, y, content)
+                // Split only for the first three parts (x, y, content) - This way we can ignore any comma that appears in the cell content itself (for example in a conditional cell).
                 String[] parts = line.split(",", 3);
 
                 // Skip invalid lines
@@ -939,15 +941,17 @@ public class Ex2Sheet implements Sheet {
                     // Extract cell content and clean it
                     String content = parts[2].trim();
 
-                    // Set cell content if coordinates are valid
+                    // if X and Y coordinates are valid
                     if (isIn(x, y)) {
+                        // Set the cell content with the file data
                         table[x][y] = new SCell(content);
                     }
                 } catch (NumberFormatException e) {
-                    // Skip lines with invalid number format
+                    // Skip lines with invalid number format or readline errors.
                     continue;
                 }
             }
+            // Closing the reader
             loader.close();
 
             // Recalculate all cells after loading
@@ -967,18 +971,22 @@ public class Ex2Sheet implements Sheet {
      */
     @Override
     public void save(String fileName) throws IOException {
+        // Create a BufferedWriter to write lines to the file (try-catch in case of error)
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            // Write the header line
+            // Write the header line to the file
             writer.write("I2CS ArielU: SpreadSheet (Ex4) assignment");
             writer.newLine();
 
-            // loop through the SpreadSheet:
-            for (int i = 0; i < width(); i++) {
-                for (int j = 0; j < height(); j++) {
-                    Cell cell = table[i][j];
+            // Iterate through all cells in the SpreadSheet
+            for (int x = 0; x < width(); x++) { // X - loop
+                for (int y = 0; y < height(); y++) { // Y - loop
+                    Cell cell = table[x][y];
+
+                    // Check if the cell is not empty
                     if (cell != null && !cell.toString().isEmpty()) {
-                        // Writing the Cell Cord and data:
-                        writer.write(i + "," + j + "," + cell.getData());
+                        // Write the cell coordinates and content to the file
+                        writer.write(x + "," + y + "," + cell.getData());
+
                         // release to the next line
                         writer.newLine();
                     }

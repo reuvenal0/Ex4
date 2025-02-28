@@ -3,8 +3,8 @@
 
 This is a solution for assignment 4: Final Assignment, in Introduction to Computer Science, 2025A at Ariel University, School of Computer Science.
 
-This project is an advanced solution for **Assignment 2 (Ex2)**, It expands upon the initial version by adding support for:
- - Conditional cells (using IF conditions)
+This project is based on **Assignment 2 (Ex2)**, It expands upon the initial version by adding support for:
+ - Conditional cells (using IF conditions).
  - Functions (min, max, sum, and average) for numerical calculations over a range of cells.
 ---
 

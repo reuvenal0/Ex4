@@ -1,6 +1,22 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Ex2Sheet - 2D Spreadsheet Implementation
+ *
+ * - Manages cells containing text, numbers, formulas, conditions, and functions.
+ * - Supports advanced calculations with error handling for circular references, invalid formulas, and more.
+ * - Automatically recalculates cell values when dependencies change.
+ * - Saves and loads spreadsheet data from files.
+ *
+ * Limitations:
+ * - Max dimensions: 26 columns (A-Z), 100 rows.
+ * - todo: Does not support nested IF conditions (yet).
+ * - todo: Arithmetic operations on a value that repeats in the same  functions cell and more
+ *
+ * Implements Sheet interface using a 2D array of Cells.
+ */
+
 public class Ex2Sheet implements Sheet {
     Cell[][] table; // 2D array of Cells
 
@@ -727,7 +743,7 @@ public class Ex2Sheet implements Sheet {
             SelectedAction = ifFalse;
         }
 
-        // We will classify what type of data we received in the result, using the methods of the scell class.
+        // We will classify what type of data we received in the result, using the methods of the SCell class.
         SCell result_of_if = new SCell(SelectedAction);
 
         // In the case of a formula, we calculate it using the appropriate method:
@@ -832,7 +848,7 @@ public class Ex2Sheet implements Sheet {
             }
         }
 
-        // We will return the list with all our numeric values"
+        // We will return the list with all our numeric values:
         return AllCellRange;
     }
 

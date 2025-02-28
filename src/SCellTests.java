@@ -1,6 +1,13 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * SCellTests - Unit tests for the SCell class.
+ *
+ * - Tests the behavior of SCell with different types of data.
+ * - Verifies the classification of data as NUMBER or TEXT.
+ * - Ensures accurate detection of invalid data types.
+ */
 public class SCellTests {
 
     SCell test_cell = new SCell("123"); // a Cell for our tests
@@ -111,6 +118,6 @@ public class SCellTests {
         assertNotEquals(Ex2Utils.TEXT, test_cell.getType());
     }
 
-//    Tests on computeForm and isForm methods are located in 'Ex2SheetTest.java'.
-
+//    Tests on formulas (computeForm), function (computeFun) and condition(computeIF)
+//    are located in 'Ex2SheetTest.java' !!!
 }

@@ -1,24 +1,48 @@
 import java.util.Arrays;
 
+/**
+ * SCell - A class representing a single spreadsheet cell.
+ *
+ * - Stores raw data (as String) and determines the type of data.
+ * - Supports data types: TEXT, NUMBER, FORM, IF_TYPE, FUCN_TYPE.
+ * - Type is calculated using patterns and rules defined in Ex2Utils.
+ * - Includes utility methods for type checks and data manipulation.
+ *
+ * This class is used by Ex2Sheet for managing individual cell behavior.
+ */
 public class SCell implements Cell {
-    private String line; //The String data saves in the Cell (raw data - Not calculated)
+    private String line; // The String data saves in the Cell (raw data - Not calculated)
     private int type; // The type of cell - according to the settings in Ex2Utils
     private int order; // representing the natural order of this Cell - calculated in Ex2Sheet class
 
     /**
      * constructor of a cell object :
      * Inserts the information we received into the Cell data String,
-     * and calculates the type of data found in the cell.
-     * @param s a String with the raw data of the Cell/
+     * and calculates the type of raw data found in the cell.
+     * @param s a String with the raw data of the Cell.
      */
     public SCell(String s) {
-        setData(s);
-        computeType();
+        setData(s);  // Sets the raw data and computes the type
+        computeType();  // Determines the type of data (e.g., NUMBER, TEXT)
     }
 
     /**
-     * Checks what type of data is in the cell
-     * The result is stored in the int type - according to the settings in Ex2Utils
+     * Computes the type of data stored in the cell.
+     * - Checks the raw data and assigns a type (e.g., TEXT, NUMBER, FORM, FUNCTION, CONDITION).
+     * - Type is stored in the int 'type' field -  according to the settings in Ex2Utils.
+     *
+     * Type determination order:
+     *  1. Empty string or null -> TEXT (empty!)
+     *  2. Valid (double) number -> NUMBER
+     *  3. Conditional (starts with "=if(") -> IF_TYPE
+     *  4. Function (matches "=<Ex2Utils.FUNCTIONS>(") -> FUCN_TYPE
+     *  5. Formula (starts with "=" but not IF or FUNCTION) -> FORM
+     *  6. Otherwise -> TEXT
+     *
+     *  The method does not verify that the value in the cell is correct!
+     * It only roughly checks where to assign the cell to perform the calculation.
+     * During the calculation, it checks whether the value in the cell is correct,
+     * and then if there is an error, it changes the type to the appropriate error.
      */
     private void computeType() {
         // An empty string is considered text (unless proven otherwise).
@@ -27,16 +51,20 @@ public class SCell implements Cell {
             type = Ex2Utils.TEXT;
             return;
         }
-
-
+        // Check if the data is a valid number:
         if (isNumber(line)) {
             // The cell contains a valid number (Double) if we were able to convert it to a number properly
             // (using a function we created that catches the conversion error if there is an error)
             type = Ex2Utils.NUMBER;
-        } else if (line.matches("(?i)^=if\\(.*")) {
-            // this cell is a IF type ??
+        }
+
+        // Check for IF condition:
+        else if (line.matches("(?i)^=if\\(.*")) {
             type = Ex2Utils.IF_TYPE;
-        } else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.matches("(?i)^=" + func + "\\(.*"))) {
+        }
+
+        // Check for function (e.g., SUM, AVERAGE):
+        else if (Arrays.stream(Ex2Utils.FUNCTIONS).anyMatch(func -> line.matches("(?i)^=" + func + "\\(.*"))) {
             type = Ex2Utils.FUCN_TYPE;
         }
 
@@ -65,10 +93,10 @@ public class SCell implements Cell {
 
         try {
             Double.parseDouble(str);
-            // We got here so the conversion is correct - therefore there is a correct number here
+            // We got here so the conversion is correct - therefore there is a correct number here:
             return true;
         } catch (NumberFormatException e) {
-            // There is a problem:
+            // There is a problem - Not a valid number:
             return false;
         }
     }
@@ -103,8 +131,8 @@ public class SCell implements Cell {
     }
 
     /**
-     * Returns the type of this cell {TEXT,NUMBER, FORM, ERR_CYCLE_FORM, ERR_WRONG_FORM}
-     * @return an int value (as defined in Ex2Utils)
+     * Returns the type of this cell according to the settings in Ex2Utils.
+     * @return an int value of the type of the Cell (e.g., TEXT, NUMBER, FORM, FUNCTION, CONDITION)
      */
     @Override
     public int getType() {
@@ -112,8 +140,10 @@ public class SCell implements Cell {
     }
 
     /**
-     * Changes the type of this Cell {TEXT,NUMBER, FORM, ERR_CYCLE_FORM, ERR_WRONG_FORM}
-     * @param t an int type value as defines in Ex2Utils.
+     * Changes the type of this Cell according to the settings in Ex2Utils.
+     * - Manually sets the type of the cell.
+     * - Used for error handling or special cases.
+     * @param t an int value of to set the type of the Cell (e.g., TEXT, NUMBER, FORM, FUNCTION, CONDITION)
      */
     @Override
     public void setType(int t) {
@@ -121,6 +151,7 @@ public class SCell implements Cell {
     }
 
     /**
+     * - Used in Ex2Sheet to determine evaluation order.
      * @return an integer representing the "number of rounds" needed to compute this cell - calculated in Ex2Sheet class.
      */
     @Override
@@ -130,6 +161,7 @@ public class SCell implements Cell {
 
     /**
      * Changes the order of this Cell
+     * - Used for dependency depth in Ex2Sheet.
      * @param t an Integer num - representing the natural order of this Cell - calculated in Ex2Sheet class.
      */
     @Override

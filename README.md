@@ -3,7 +3,7 @@
 
 This is a solution for assignment 4: Final Assignment, in Introduction to Computer Science, 2025A at Ariel University, School of Computer Science.
 
-This project is based on [**Assignment 2 (Ex2)**]([link to my solution for Ex2](https://github.com/reuvenal0/Ex2.git)), It expands upon the initial version by adding support for:
+This project is based on **Assignment 2 (Ex2)**([link to my solution for Ex2](https://github.com/reuvenal0/Ex2.git)), It expands upon the initial version by adding support for:
  - Conditional cells (using IF conditions).
  - Functions (min, max, sum, and average) for numerical calculations over a range of cells.
 ---

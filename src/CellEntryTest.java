@@ -1,14 +1,18 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+// Unit tests for the CellEntry class using JUnit:
 class CellEntryTest {
 
     // When we create the following objects, we will invoke the constructors and the 'parseEntry' method
+
+    // Valid CellEntry objects
     CellEntry A0 = new CellEntry("A0");
     CellEntry z99 = new CellEntry("z99");
     CellEntry D4 = new CellEntry(3,4);
     CellEntry Y87 = new CellEntry(24,87);
 
+    // Invalid CellEntry objects
     CellEntry A101 = new CellEntry(0,101);
     CellEntry B101 = new CellEntry("B101");
     CellEntry h999 = new CellEntry("h999");
@@ -19,23 +23,22 @@ class CellEntryTest {
     CellEntry null_c = new CellEntry(null);
     CellEntry A1_withSpaces = new CellEntry(" A1 ");
     CellEntry B2_withSpaces2 = new CellEntry("  B2  ");
-
     CellEntry value_44 = new CellEntry("  4  4  ");
     CellEntry value_888 = new CellEntry("888");
     CellEntry invalidSymbols = new CellEntry("A@1");
     CellEntry invalidSymbols2 = new CellEntry("A$5");
     CellEntry negativeCords = new CellEntry(-1, 5);
 
-    //isValid test
+    //isValid test: Tests the validity of CellEntry objects
     @Test
-    void isValidTest() {
-        // valid
+    void isValid_Test() {
+        // valid index:
         assertTrue(A0.isValid());
         assertTrue(z99.isValid());
         assertTrue(D4.isValid());
         assertTrue(Y87.isValid());
 
-        //invalid
+        //invalid index:
         assertFalse(A101.isValid());
         assertFalse(B101.isValid());
         assertFalse(h999.isValid());
@@ -54,14 +57,16 @@ class CellEntryTest {
         assertFalse(negativeCords.isValid());
     }
 
-    // getX test
+    // Tests the x-coordinate retrieval for CellEntry objects:
     @Test
-    void getX() {
+    void getX_Test() {
+        // valid index:
         assertEquals(A0.getX(),0);
         assertEquals(z99.getX(),25);
         assertEquals(D4.getX(),3);
         assertEquals(Y87.getX(),24);
 
+        //invalid index:
         assertEquals(A101.getX(),Ex2Utils.ERR);
         assertEquals(B101.getX(),Ex2Utils.ERR);
         assertEquals(h999.getX(),Ex2Utils.ERR);
@@ -80,14 +85,16 @@ class CellEntryTest {
 
     }
 
-    // getY test
+    // Tests the y-coordinate retrieval for CellEntry objects
     @Test
-    void getY() {
+    void getY_Test() {
+        // valid index:
         assertEquals(A0.getY(),0);
         assertEquals(z99.getY(),99);
         assertEquals(D4.getY(),4);
         assertEquals(Y87.getY(),87);
 
+        //invalid index:
         assertEquals(A101.getY(),Ex2Utils.ERR);
         assertEquals(B101.getY(),Ex2Utils.ERR);
         assertEquals(h999.getY(),Ex2Utils.ERR);
@@ -105,14 +112,16 @@ class CellEntryTest {
         assertEquals(B2_withSpaces2.getY(),Ex2Utils.ERR);
     }
 
-    // toString test
+    // Tests the string representation of CellEntry objects
     @Test
-    void testToString() {
+    void ToString_Test() {
+        // valid index:
         assertEquals(A0.toString(),"A0");
         assertEquals(z99.toString(),"Z99");
         assertEquals(D4.toString(),"D4");
         assertEquals(Y87.toString(),"Y87");
 
+        //invalid index:
         assertEquals(A101.toString(),Ex2Utils.EMPTY_CELL);
         assertEquals(B101.toString(),Ex2Utils.EMPTY_CELL);
         assertEquals(h999.toString(),Ex2Utils.EMPTY_CELL);

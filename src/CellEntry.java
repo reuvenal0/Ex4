@@ -1,14 +1,20 @@
+/**
+ * Represents a 2D cell index for spreadsheet-like coordinates.
+ * Supports two representations:
+ * 1. Integer coordinates (X, Y):
+ *    - X: 0 to 25 (corresponding to A-Z)
+ *    - Y: 0 to 99
+ * 2. String index format: 'Letter + 2 digits' (e.g., 'A0', 'Z67').
+ * Implements Index2D interface.
+ */
 public class CellEntry  implements Index2D {
-    // This class represents a simple 2D cell index (as in a spreadsheet),In two equivalent ways of representation:
-    // X, Y coordinates (Integers): X form 0 to 26, Z form 0 to 99.
-    // index 'char + 2 digit': for exemple: 'A0' or 'Z67'.
-
-    private int x, y; // First representation method
-    private String cords; // Second representation method
+    private int x, y; // 1) X and Y coordinates representing the cell index.
+    private String cords; // 2) // String representation of the cell index (e.g., "A0", "Z67").
 
     /**
      * constructor for an CellEntry object -
      * converts form String coordinates (index) to x,y integer value
+     * If invalid or null, the index is marked as an error.
      * @param cords an index in the spreadsheet: 'char + 2 digit': for exemple: 'A0' or 'Z67'.
      */
     public CellEntry(String cords) {
@@ -19,43 +25,53 @@ public class CellEntry  implements Index2D {
             x = y = Ex2Utils.ERR;
         } else if (cords.length() < 2) {
             this.cords = cords;
+            //Set the Integers as ERR
             x = y = Ex2Utils.ERR;
-        } else { // valid String
+        }
+        // Valid string format - proceed to parse:
+        else {
             this.cords = cords.toUpperCase();
-            parseEntry(); // coverts to Int
+            parseEntry(); // Convert the string to integer coordinates.
         }
     }
 
     /**
      * constructor for an CellEntry object -
      * converts form x and Y coordinates (Integers) to String coordinates
-     * @param xx the x value of required cell coordinate.
-     * @param yy the x value of required cell coordinate.
+     * If the coordinates are valid, the string index is constructed using Ex2Utils.ABC array.
+     * If invalid, the index is marked as an error.
+     * @param xx The x-coordinate (0 to 25, corresponding to letters A to Z).
+     * @param yy The y-coordinate (0 to 99).
      */
     public CellEntry(int xx, int yy) {
+        // Check if the coordinates are within the valid range:
         if (yy >= 0 && yy <= 99 && xx >= 0 && xx <= 25)
         {
             // valid coordination: let's use the Ex2Utils ABC array, and construct CellEntry object:
             String cordsXY = Ex2Utils.ABC[xx] + Integer.toString(yy);
             this.cords = cordsXY.toUpperCase().trim();
+            // Parse the newly constructed string to initialize x and y:
             parseEntry();
-        } else { //invalid X-Y coordination
+        } // Invalid coordinates - mark as error:
+        else {
             this.cords = Ex2Utils.EMPTY_CELL;
             x = y = Ex2Utils.ERR;
         }
     }
 
     /**
-     * converts form x and Y coordinates (Integers) to String coordinates:
-     * using this.cord String, and compute the value for int x and int Y.
+     * Parses the string index (this.cords) to compute the integer coordinates (x and y).
+     * - The first character is interpreted as the X index (A=0, B=1, ..., Z=25).
+     * - The remaining part is parsed as the Y index (0 to 99).
+     * If the string is not in a valid format or if parsing fails, the coordinates are marked as errors.
      */
     private void parseEntry() {
-        // Getting the first char in the String: the letter Index (For the convenience of checking the size - we will convert it to a capital letter)
+        // Extract the first character and convert it to uppercase (for consistency):
         char c = Character.toUpperCase(cords.charAt(0));
         // A letter less than A and greater than Z is invalid:
         if (c < 'A' || c > 'Z')
         {
-            //Set the Integers as ERR
+            // Invalid character - mark x and y as errors:
             x = y = Ex2Utils.ERR;
             return; // End the parsing process
         }
@@ -67,7 +83,7 @@ public class CellEntry  implements Index2D {
             y = Integer.parseInt(cords.substring(1)); // Conversion of the remaining digits in the string
             //Digits must be greater than 0 and less than 100
             if (y < 0 || y > 99) {
-
+                // Invalid Y value
                 //Set the Integers as ERR
                 x = y = Ex2Utils.ERR;
             }

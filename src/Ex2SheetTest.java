@@ -2,12 +2,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
+// Unit tests for Ex2Sheet class using JUnit
 class Ex2SheetTest {
 
     // let's create a spreadsheet for our tests - according to the maximum dimensions we require: A-Z [0-25] on the X-axis, and 100 [0-99] on the Y-axis:
     Ex2Sheet TestSheet = new Ex2Sheet(26,100);
 
-    // let's test the constructors:
+    // Tests for Ex2Sheet constructors
     @Test
     void constructors_Test() {
         // invalid spreadsheet dimensions
@@ -17,8 +18,7 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> new Ex2Sheet(5, 101));
 
         // default spreadsheet constructor:
-        Ex2Sheet DefaultSheet = new Ex2Sheet();
-        //Ex2Utils.WIDTH = 9 Ex2Utils.HEIGHT = 17:
+        Ex2Sheet DefaultSheet = new Ex2Sheet(); // Ex2Utils.WIDTH = 9 Ex2Utils.HEIGHT = 17:
         assertEquals(DefaultSheet.width(), 9);
         assertEquals(DefaultSheet.height(), 17);
     }
@@ -101,6 +101,7 @@ class Ex2SheetTest {
         // Test circular reference cells - are below in the 'depth()' test method.
     }
 
+    // Tests for retrieving cells by X and Y coordinates
     @Test
     void getByIndex_Test() {
         // Test valid coordinates with different cell types
@@ -135,6 +136,7 @@ class Ex2SheetTest {
         assertNull(TestSheet.get(26, 100));
     }
 
+    // Tests for retrieving cells by string coordinates (e.g., "A0", "Z99")
     @Test
     void getByCord_Test() {
         // Set up test cells with different types of content
@@ -174,27 +176,35 @@ class Ex2SheetTest {
         assertNull(TestSheet.get(" A1 ")); // Spaces in reference
     }
 
+    // Test for spreadsheet width
     // default spreadsheet constructor was tested already checked before...So there we check these functions again:
     @Test
     void width_Test() {
         assertEquals(TestSheet.width(), 26);
     }
+
+    // Test for spreadsheet height
+    // default spreadsheet constructor was tested already checked before...So there we check these functions again:
     @Test
     void height_Test() {
         assertEquals(TestSheet.height(), 100);
     }
 
+    // Tests for checking if coordinates are within the spreadsheet bounds
     @Test
     void isIn_Test() {
-        assertTrue(TestSheet.isIn(0, 0));
-        assertTrue(TestSheet.isIn(25, 98));
+        assertTrue(TestSheet.isIn(0, 0)); // Valid top-left
+        assertTrue(TestSheet.isIn(25, 98)); // Valid bottom-right
 
-        assertFalse(TestSheet.isIn(-1, 0));
-        assertFalse(TestSheet.isIn(0, -1));
-        assertFalse(TestSheet.isIn(26, 0));
-        assertFalse(TestSheet.isIn(0, 101));
+        assertFalse(TestSheet.isIn(-1, 0)); // Negative X
+        assertFalse(TestSheet.isIn(0, -1)); // Negative Y
+        assertFalse(TestSheet.isIn(26, 0)); // X out of range
+        assertFalse(TestSheet.isIn(0, 101)); // Y out of range
     }
 
+    // Tests for depth calculation in formula dependencies.
+    // Checks calculation depth for simple and nested formulas.
+    // Validates detection of circular references.
     @Test
     void depth_Test() {
         // Test depth calculations
@@ -217,15 +227,12 @@ class Ex2SheetTest {
         assertEquals(-1, depths[4][0]); //E0
         assertEquals(-1, depths[4][1]); //E1
         assertEquals(-1, depths[4][2]); //E2
-
+        assertEquals(-1, depths[4][3]); // E3
 
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 0)); //E0
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 1)); //E1
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 2)); //E2
-
-
-        assertEquals(-1, depths[4][3]); // E3
-        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 3));
+        assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(4, 3)); //E3
 
         // Circular Error Detection
         TestSheet.set(0, 0, "=B0");
@@ -235,7 +242,8 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(1, 0));
         assertEquals(Ex2Utils.ERR_CYCLE, TestSheet.value(2, 0));
 
-        //depth With Range - Check depth calculation with range references on function cells
+        //depth With Range
+        // - Check depth calculation with range references on function cells
         TestSheet.set(5, 0, "10"); // F0: depth 0
         TestSheet.set(6, 0, "20"); // G0: depth 0
         TestSheet.set(7, 0, "=SUM(F0:G0)"); // H0: depth 1
@@ -247,7 +255,8 @@ class Ex2SheetTest {
         assertEquals(1, depths[7][0]); // H0
         assertEquals(2, depths[8][0]); // I0
 
-        //depth With IF - Check depth calculation with condition cells
+        //depth With IF
+        // - Check depth calculation with condition cells
         TestSheet.set(5, 0, "10"); // F0: depth 0
         TestSheet.set(6, 0, "20"); // G0: depth 0
         TestSheet.set(7, 0, "=IF(F0 > 5, G0, 0)"); // H0: depth 1
@@ -261,7 +270,11 @@ class Ex2SheetTest {
 
     }
 
-    // tests taken form the first stage, testing 'computeForm' method:
+    /**
+     * Tests for computeForm() method - tests taken form the first stage
+     * - Validates arithmetic operations, parentheses, and complex calculations.
+     * - Tests decimal handling, negative numbers, and invalid expressions.
+     */
     @Test
     void computeForm_Test() {
         // Basic operations
@@ -324,7 +337,12 @@ class Ex2SheetTest {
         assertThrows(IllegalArgumentException.class, () -> TestSheet.computeForm("2+2", 0, 0));
     }
 
-    // tests taken form the first stage, on mainOpTests:
+    // , on mainOpTests:
+    /**
+     * Tests for indexOfMainOp() method - tests taken form the first stage
+     * - Checks correct index of the main operator considering operator precedence.
+     * - Validates handling of parentheses.
+     */
     @Test
     void mainOp_Tests() {
         // Testing the index of the main operator
@@ -344,20 +362,31 @@ class Ex2SheetTest {
         assertEquals(7, TestSheet.indexOfMainOp("(1+2*3)+(4-5)")); // Should find the + between parentheses
     }
 
-    // tests taken form the first stage, on bracketEndIndTest:
+    /**
+     * Tests for BracketEndInd() method - tests taken form the first stage, on mainOpTests:
+     * - Checks correct detection of matching closing parentheses.
+     * - Ensures exceptions are thrown for unbalanced parentheses.
+     */
     @Test
     void bracketEndInd_Test() {
         assertEquals(3, TestSheet.BracketEndInd("1+2)"));
         assertEquals(5, TestSheet.BracketEndInd("(1+2))"));
         assertEquals(7, TestSheet.BracketEndInd("((1+2)))"));
 
+        // Unbalanced parentheses should throw exceptions
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("(1+2"));
         assertThrows(IllegalArgumentException.class, () -> TestSheet.BracketEndInd("1+2"));
     }
 
+    /**
+     * Tests for built-in spreadsheet functions (SUM, AVERAGE, MAX, MIN) - Ex4 special!
+     * - Validates function calculation with ranges and single cells.
+     * - Checks handling of invalid ranges and circular references.
+     */
     @Test
     void Functions_Test() {
-        // testing standard function (We have empty cells on purpose, we have defined that we do not take these empty cells into account):
+        // testing standard function
+        // (We have empty cells on purpose, we have defined that we do not take these empty cells into account):
         TestSheet.set(0, 0, "25");
         TestSheet.set(0, 1, "=A0*3");
         TestSheet.set(1, 0, "=40+5.5"); // ==45.5
@@ -406,13 +435,13 @@ class Ex2SheetTest {
         TestSheet.set(0, 0, "=min(A0:C1)");
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(0, 0));
 
-        // Extreme Values and Overflow
+        // Extreme Values and Overflow test:
         TestSheet.set(0, 0, String.valueOf(Double.MAX_VALUE));
         TestSheet.set(0, 1, String.valueOf(Double.MAX_VALUE));
         TestSheet.set(4, 1, "=sum(A0:A1)");
         assertEquals("Infinity", TestSheet.value(4, 1));
 
-        //  Empty Range Handling
+        //  Empty value Range test
         TestSheet.set(0, 0, "");
         TestSheet.set(0, 1, "");
 
@@ -436,7 +465,7 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 2));
         assertEquals(Ex2Utils.ERR_FUCN_str, TestSheet.value(2, 3));
 
-        // function circular error test:
+        // function circular reference error test:
         TestSheet.set(5, 0, "=SUM(G0:H1)"); // F0 depends on G0, G1, H0, H1
         TestSheet.set(6, 0, "=F0*2"); // G0 depends on F0
         TestSheet.set(7, 1, "=G0+3"); // H1 depends on G0
@@ -465,16 +494,21 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 0));
         assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 1));
 
-
 //        todo:
 //        TestSheet.set(6, 1, "=MAX(F0:F2) - MIN(F0:F2)");
 //        assertEquals("20.0", TestSheet.value(6, 1));
 
     }
 
+    /**
+     * Tests for IF conditions in formulas - Ex4 special!
+     * - Checks basic conditional logic with comparison operators.
+     * - Validates nested conditions and references.
+     * - Tests handling of invalid IF statements.
+     */
     @Test
     void Condition_Test() {
-        // Basic IF conditions
+        // Basic IF conditions - valid results (with cell references):
         TestSheet.set(20, 0, "=if(1<2,1,2)"); //U0 = 1.0
         TestSheet.set(20, 1, "=if(U0>3, big,small)"); // U1 = small
         TestSheet.set(20, 5, "=if(1000 <= 2000 ,10,2)"); //U5 = 10.0
@@ -489,6 +523,7 @@ class Ex2SheetTest {
         assertEquals("100.0", TestSheet.value(20, 7));
         assertEquals("300.0", TestSheet.value(20, 2));
 
+        // More tests:
         TestSheet.set(1, 0, "=if(1+1==2, 100, 200)"); // B0 = 100.0
         TestSheet.set(1, 1, "=if(2*3>5, 300, 400)"); // B1 = 300.0
         TestSheet.set(1, 2, "=if((2+2)*2<=8, 500, 600)"); // B2 = 500.0
@@ -497,13 +532,14 @@ class Ex2SheetTest {
         assertEquals("300.0", TestSheet.value(1, 1));
         assertEquals("500.0", TestSheet.value(1, 2));
 
-        // IF with references
+        // More IF cells with references
         TestSheet.set(20, 7, "=if(U5<U6,30,-101)"); //U7 = 30
         TestSheet.set(20, 8, "=if(U6 != U7,3,777)"); //U8 = 3
         assertEquals("30.0", TestSheet.value(20, 7));
         assertEquals("3.0", TestSheet.value(20, 8));
 
-        //IF ERR
+
+        // Invalid IF statements should return error
         TestSheet.set(20, 0, "=if(1,2,3"); //U0
         TestSheet.set(20, 1, "=if(u6>1, 1 )"); // U1
         TestSheet.set(20, 2, "=if(u566<u6, 1, 0)"); // U2
@@ -514,6 +550,7 @@ class Ex2SheetTest {
         TestSheet.set(20, 8, "=if(A1>0, B1)"); // U8
         TestSheet.set(20, 9, "=if(A1,, 10)"); // U9
 
+        // Validate error messages for invalid IF statements:
         assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 0));
         assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 1));
         assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20, 2));
@@ -525,11 +562,17 @@ class Ex2SheetTest {
         assertEquals(Ex2Utils.ERR_IF_str, TestSheet.value(20,9));
     }
 
-    // let's test the I/O methods:
+    /**
+     * Tests for saving and loading spreadsheets.
+     * - Verifies data persistence by saving and loading spreadsheet content.
+     * - Checks consistency of text, numbers, formulas, and functions.
+     * - Ensures invalid content is not loaded.
+     */
     @Test
     void Save_Load_Test() throws IOException {
         String test_file = "Save_LoadTest.txt";
-        // Set up some test data:
+
+        // Set up test data with various types of cells
         TestSheet.set(0, 0, "100"); // A0 - Number
         TestSheet.set(0, 1, "Hello"); // A1 - Text
         TestSheet.set(0, 10, "=SUM(A11:C11)"); // A10 - Sum function with range
@@ -553,7 +596,7 @@ class Ex2SheetTest {
         // Load the file we just saved:
         TestSheet.load(test_file);
 
-        // Verify the loaded data
+        // Verify the loaded data is consistent with saved data
         assertEquals("100.0", TestSheet.value(0, 0)); // A0 - Number
         assertEquals("Hello", TestSheet.value(0, 1)); // A1 - Text
         assertEquals("100.0", TestSheet.value(0, 11)); // A11 - Number

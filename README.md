@@ -1,5 +1,5 @@
 # Ex4 - Enhanced Graphic Spreadsheet
-***מה זה?
+**The program is a graphical spreadsheet application in Java, supporting text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`), including a graphical user interface, error handling, and file save/load functionality.**
 
 This is a solution for assignment 4: Final Assignment, in Introduction to Computer Science, 2025A at Ariel University, School of Computer Science.
 
@@ -26,9 +26,9 @@ This project is an advanced solution for **Assignment 2 (Ex2)**, It expands upon
 ---
 
 ## 📸 Demo Screenshot
+- The image below demonstrates the program, showing all types of cells: Text, Number, Formula, Error in the formula, and Circular Dependency Error:
 ??
 ---
-
 
 ## 🔧 Installation & Setup
 1. **Clone the repository:**
@@ -56,7 +56,31 @@ This project is an advanced solution for **Assignment 2 (Ex2)**, It expands upon
     - Use functions for range calculations (e.g., `=sum(A1:C3)`).
 ---
 
-## 🧩My Class Structure
+## 🧩 My Class Structure
+- `SCell`: Individual cell implementation of the `Cell` interface
+    - Stores cell data, type, and order.
+    - Supported data: text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`).
+    - Initial type verification and error handling (`ERR_FORM_FORMAT`, `ERR_CYCLE_FORM`, `ERR_IF`, `ERR_FUNC`).
+
+- `Ex2Sheet`: Main spreadsheet implementation of the `Sheet` interface
+    - Creates and manages the 2D array of cells.
+    - Handles formula evaluation, including conditions (`IF`) and functions.
+    - Identifies errors in formula calculation, circular references, and invalid conditions/functions.
+    - Cell type validation and dependency tracking.
+    - Calculates the depth of cells: Counting dependencies for accurate evaluation order.
+    - Implements save/load functionality, including support for conditions and functions.
+
+- `CellEntry`: Cell coordinate handler, implementation of the `Index2d` interface
+    - Converts between string coordinates (`"A1"`, `"B2"`) and numeric indices (`x`, `y`).
+    - Validates cell references as valid indices.
+    - Handles indexing errors for out-of-bound or invalid references.
+
+- `Range2D`: Range handler for cell groups (e.g., `A1:C3`)
+    - Represents a 2D range of cells using start and end coordinates.
+    - Supports range-based functions (`min`, `max`, `sum`, `average`).
+    - Validates range format and ensures the range is within spreadsheet boundaries.
+    - Integrates with `Ex2Sheet` for efficient range evaluations.
+---
 
 
 ## 🩹 Error Handling
@@ -71,8 +95,10 @@ This project is an advanced solution for **Assignment 2 (Ex2)**, It expands upon
 ## 🧪 Testing
 The project includes comprehensive **JUnit tests** for all core functionalities, including:
 - **Basic cell operations** (text, number, formula, condition, function).
-- **Formula evaluation** and **circular dependency detection**.
+- **circular dependency detection**.
+- **Formula evaluation** and **syntax error detection**.
 - **Function calculations** over a range of cells.
+- **condition evaluation** and **calculating a desired result**.
 - **Error handling** for invalid inputs.
 - **File I/O operations** for save/load functionality.
 ---

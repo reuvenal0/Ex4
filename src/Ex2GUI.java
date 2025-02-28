@@ -2,8 +2,7 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * ArielU. Intro2CS, Ex2: https://docs.google.com/document/d/1-18T-dj00apE4k1qmpXGOaqttxLn-Kwi/edit?usp=sharing&ouid=113711744349547563645&rtpof=true&sd=true
- * DO NOT CHANGE THIS INTERFACE!!
+ * ArielU. Intro2CS - 2025A
  * This is NOT a Junit class - as it tests GUI components which
  * should not be tested using Junit.
  * 

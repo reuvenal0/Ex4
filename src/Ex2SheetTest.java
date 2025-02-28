@@ -570,7 +570,7 @@ class Ex2SheetTest {
      */
     @Test
     void Save_Load_Test() throws IOException {
-        String test_file = "Save_LoadTest.txt";
+        String test_file = "Save_Load_Test.txt";
 
         // Set up test data with various types of cells
         TestSheet.set(0, 0, "100"); // A0 - Number

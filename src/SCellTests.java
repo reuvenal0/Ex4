@@ -14,7 +14,7 @@ public class SCellTests {
 
     //testing an Number value inside Scell
     @Test
-    public void Number_tests()
+    public void Number_Test()
     {
         // Valid number value:
         test_cell.setData("123"); // testing this value inside the cell
@@ -69,7 +69,7 @@ public class SCellTests {
 
     //testing isText method
     @Test
-    public void Text_test(){
+    public void Text_Test(){
         // Valid text value:
         test_cell.setData("ABC1%$%23&^"); // testing this value inside the cell
         assertEquals(Ex2Utils.TEXT, test_cell.getType());

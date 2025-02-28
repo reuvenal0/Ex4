@@ -11,7 +11,7 @@ public class Range2DTests {
      * Test valid range creation and method checks.
      */
     @Test
-    void testValidRange() {
+    void ValidRange_Test() {
         Range2D range_One = new Range2D("A1:B2");
         // Range should be valid
         assertTrue(range_One.isValidRange());
@@ -49,7 +49,7 @@ public class Range2DTests {
      * Test invalid range construction with an empty string.
      */
     @Test
-    void testEmptyRange() {
+    void EmptyRange_Test() {
         //Expect an exception for empty range
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new Range2D("");
@@ -61,7 +61,7 @@ public class Range2DTests {
      * Test invalid range construction with null input.
      */
     @Test
-    void testNullRange() {
+    void NullRange_Test() {
         //Expect an exception for null input
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new Range2D(null);
@@ -73,7 +73,7 @@ public class Range2DTests {
      * Test invalid range where start is after end.
      */
     @Test
-    void testStartAfterEnd() {
+    void StartAfterEnd_Test() {
         //Expect an exception for start being after end
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new Range2D("B2:A1");
@@ -85,7 +85,7 @@ public class Range2DTests {
      * Test invalid range with incorrect format.
      */
     @Test
-    void testInvalidFormat() {
+    void InvalidFormat_Test() {
         // Expect an exception for incorrect format - "A1B2"
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new Range2D("A1B2");

@@ -16,7 +16,7 @@ public class SCell implements Cell {
     private int order; // representing the natural order of this Cell - calculated in Ex2Sheet class
 
     /**
-     * constructor of a cell object :
+     * constructor of a cell object:
      * Inserts the information we received into the Cell data String,
      * and calculates the type of raw data found in the cell.
      * @param s a String with the raw data of the Cell.

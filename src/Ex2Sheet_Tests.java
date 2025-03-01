@@ -545,6 +545,23 @@ class Ex2Sheet_Tests {
         assertEquals("30.0", TestSheet.value(20, 7));
         assertEquals("3.0", TestSheet.value(20, 8));
 
+        // Testing condition that return functions
+        TestSheet.set(0, 0, "4");  // A0
+        TestSheet.set(0, 1, "6");  // A1
+        TestSheet.set(0, 2, "2");  // A2
+        TestSheet.set(1, 0, "3");  // B0
+        TestSheet.set(1, 1, "9");  // B1
+        TestSheet.set(1, 2, "5");  // B2
+        TestSheet.set(20, 9, "=if(A0<B0,=sum(A0:A2),=max(B0:B2))");
+        assertEquals("9.0", TestSheet.value(20,9));
+
+        // nested conditions tests:
+        TestSheet.set(20, 9, "=if(U6 < U7 , =if( U7 < U8 , true , tie ) , false)"); //U9 = tie
+        assertEquals("tie", TestSheet.value(20, 9));
+
+        TestSheet.set(20,9,"=if(10<5, 1,=if(3>4, 0, 2))");
+        assertEquals("2.0", TestSheet.value(20, 9)); //U9 = 2
+
 
         // Invalid IF statements should return error
         TestSheet.set(20, 0, "=if(1,2,3"); //U0

@@ -1,8 +1,14 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Unit tests for the CellEntry class using JUnit:
-class CellEntryTest {
+/**
+ * CellEntry_Tests - JUnit tests for the CellEntry class.
+ * - Verifies the correct parsing and validation of cell entries.
+ * - Tests retrieval of X and Y coordinates from valid and invalid entries.
+ * - Ensures proper handling of invalid inputs and edge cases.
+ * - Checks the correct string representation of cell entries.
+ */
+class CellEntry_Tests {
 
     // When we create the following objects, we will invoke the constructors and the 'parseEntry' method
 

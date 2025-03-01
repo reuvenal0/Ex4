@@ -2,10 +2,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test class for Range2D.
- * This class tests the construction, validation, and methods of Range2D.
+ * Range2D_Tests - JUnit tests for the Range2D class.
+ * - Verifies correct parsing and validation of range inputs.
+ * - Tests valid and invalid range constructions, including edge cases.
+ * - Checks proper handling of incorrect formats, empty inputs, and invalid ranges.
  */
-public class Range2DTests {
+
+public class Range2D_Tests {
 
     /**
      * Test valid range creation and method checks.

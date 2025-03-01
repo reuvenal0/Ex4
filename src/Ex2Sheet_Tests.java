@@ -2,8 +2,15 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
-// Unit tests for Ex2Sheet class using JUnit
-class Ex2SheetTest {
+/**
+ * Ex2Sheet_Tests - JUnit tests for the Ex2Sheet class.
+ * - Validates the behavior of the Ex2Sheet class, ensuring correct spreadsheet functionality.
+ * - Tests constructors, data manipulation, formula evaluation, and function execution.
+ * - Checks handling of invalid inputs, circular references, and edge cases.
+ * - Verifies the correctness of save and load methods.
+ */
+
+class Ex2Sheet_Tests {
 
     // let's create a spreadsheet for our tests - according to the maximum dimensions we require: A-Z [0-25] on the X-axis, and 100 [0-99] on the Y-axis:
     Ex2Sheet TestSheet = new Ex2Sheet(26,100);

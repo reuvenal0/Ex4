@@ -2,12 +2,10 @@ import java.util.Arrays;
 
 /**
  * SCell - A class representing a single spreadsheet cell.
- *
  * - Stores raw data (as String) and determines the type of data.
  * - Supports data types: TEXT, NUMBER, FORM, IF_TYPE, FUCN_TYPE.
  * - Type is calculated using patterns and rules defined in Ex2Utils.
  * - Includes utility methods for type checks and data manipulation.
- *
  * This class is used by Ex2Sheet for managing individual cell behavior.
  */
 public class SCell implements Cell {
@@ -31,12 +29,12 @@ public class SCell implements Cell {
      * - Checks the raw data and assigns a type (e.g., TEXT, NUMBER, FORM, FUNCTION, CONDITION).
      * - Type is stored in the int 'type' field -  according to the settings in Ex2Utils.
      *
-     * Type determination order:
+     * the Cell types:
      *  1. Empty string or null -> TEXT (empty!)
      *  2. Valid (double) number -> NUMBER
-     *  3. Conditional (starts with "=if(") -> IF_TYPE
-     *  4. Function (matches "=<Ex2Utils.FUNCTIONS>(") -> FUCN_TYPE
-     *  5. Formula (starts with "=" but not IF or FUNCTION) -> FORM
+     *  3. Conditional starts with "=if(") -> IF_TYPE
+     *  4. Function matches "=<Ex2Utils.FUNCTIONS>(") -> FUCN_TYPE
+     *  5. Formula starts with "=" but not IF or FUNCTION -> FORM
      *  6. Otherwise -> TEXT
      *
      *  The method does not verify that the value in the cell is correct!

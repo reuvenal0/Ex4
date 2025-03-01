@@ -3,18 +3,12 @@ import java.util.*;
 
 /**
  * Ex2Sheet - 2D Spreadsheet Implementation
- *
  * - Manages cells containing text, numbers, formulas, conditions, and functions.
  * - Supports advanced calculations with error handling for circular references, invalid formulas, and more.
  * - Automatically recalculates cell values when dependencies change.
  * - Saves and loads spreadsheet data from files.
- *
  * Limitations:
- * - Max dimensions: 26 columns (A-Z), 100 rows.
- * - todo: Does not support nested IF conditions (yet).
  * - todo: Arithmetic operations on a value that repeats in the same  functions cell and more
- *
- * Implements Sheet interface using a 2D array of Cells.
  */
 
 public class Ex2Sheet implements Sheet {
@@ -594,19 +588,17 @@ public class Ex2Sheet implements Sheet {
         char operator = form.charAt(mainOpIn);
 
         // We will perform the connection between the parts - according to the operator, each part will be calculated in this method again (recursion):
-        switch (operator) {
-            case '+':
-                return (computeForm("=" + firstPart, x,y)) + (computeForm("=" + secondPart, x,y));
-            case '-':
-                return (computeForm("=" + firstPart, x,y)) - (computeForm("=" + secondPart, x,y));
-            case '*':
-                return (computeForm("=" + firstPart, x,y)) * (computeForm("=" + secondPart, x,y));
-            case '/':
-                return (computeForm("=" + firstPart, x,y)) / (computeForm("=" + secondPart, x,y));
-        }
+        return switch (operator) {
+            case '+' -> (computeForm("=" + firstPart, x, y)) + (computeForm("=" + secondPart, x, y));
+            case '-' -> (computeForm("=" + firstPart, x, y)) - (computeForm("=" + secondPart, x, y));
+            case '*' -> (computeForm("=" + firstPart, x, y)) * (computeForm("=" + secondPart, x, y));
+            case '/' -> (computeForm("=" + firstPart, x, y)) / (computeForm("=" + secondPart, x, y));
+            default ->
 
-        // If there is any problem - we will throw an error:
-        throw new IllegalArgumentException("invalid value");
+                // If there is any problem - we will throw an error:
+                    throw new IllegalArgumentException("invalid value");
+        };
+
     }
 
     /**
@@ -652,26 +644,20 @@ public class Ex2Sheet implements Sheet {
      * @return Its precedence as an arithmetic operator
      */
     int getOperatorPriority(char operator) {
-        switch (operator) {
+        return switch (operator) {
             //first priority is '+' and '-'
-            case '+':
-                return 1;
-            case '-':
-                return 1;
+            case '+' -> 1;
+            case '-' -> 1;
 
             //second priority is '*' and '/'
-            case '*':
-                return 2;
-            case '/':
-                return 2;
+            case '*' -> 2;
+            case '/' -> 2;
 
             // in case of a number (not an operator)
-            default:
-                return -1;
-        }
+            default -> -1;
+        };
     }
 
-    //
     /**
      * The function finds the index of the matching closing parenthesis by keeping track of nested parentheses using a counter
      * @param form a String that Removed the '([ character from it, and now you need to find where the parenthesis is ')':
@@ -710,17 +696,14 @@ public class Ex2Sheet implements Sheet {
             throw new IllegalArgumentException("Invalid IF format");
         }
 
-        form = form.substring(4,form.length()-1); // Remove the '=' char
+        form = form.substring(4,form.length()-1); // Remove the '=if' chars
         form = form.replaceAll("\\s",""); // delete all the space chars in the String
 
-        // Split the string by commas - Conditional format
-        String[] parts = form.split(",");
+        // Split the string by commas - as the conditional format.
+        // we will use regex to ignore commas if they are inside parentheses, so we can support nested conditions
+        String[] parts = form.split(",(?![^()]*\\))");
         // If there are not exactly three commas then the condition does not meet the format
         if (parts.length != 3) throw new IllegalArgumentException("Invalid IF format");
-        /*
-         TODO:
-        Support for nested IFs
-        */
 
         // We will create variables for each part of the condition
         String condition = parts[0].trim();
@@ -746,23 +729,25 @@ public class Ex2Sheet implements Sheet {
         // We will classify what type of data we received in the result, using the methods of the SCell class.
         SCell result_of_if = new SCell(SelectedAction);
 
-        // In the case of a formula, we calculate it using the appropriate method:
-        if (result_of_if.getType() == Ex2Utils.FORM) return Double.toString(computeForm(SelectedAction, x, y));
+        return switch (result_of_if.getType()) {
+            // In the case of a formula, we calculate it using the appropriate method:
+            case Ex2Utils.FORM -> Double.toString(computeForm(SelectedAction, x, y));
 
-        // In the case of a number, let's parse the number to Double, then parse it to String:
-        else if (result_of_if.getType() == Ex2Utils.NUMBER) return Double.toString(Double.parseDouble(SelectedAction));
+            // In the case of a number, let's parse the number to Double, then parse it to String:
+            case Ex2Utils.NUMBER -> Double.toString(Double.parseDouble(SelectedAction));
 
-        // In the case of a text, let's return the test String as is:
-        else if (result_of_if.getType() == Ex2Utils.TEXT) return SelectedAction;
+            // In the case of a text, let's return the test String as is:
+            case Ex2Utils.TEXT -> SelectedAction;
 
-        // TODO: Support for nested IFs
-//        else if (result_of_if.getType() == Ex2Utils.IF_TYPE) return computeIF(SelectedAction, x, y);
+            // In the case of a condition, we calculate it using the appropriate method (nested condition):
+            case Ex2Utils.IF_TYPE -> computeIF(SelectedAction, x, y);
 
-        // In the case of a function, we calculate it using the appropriate method:
-        else if (result_of_if.getType() == Ex2Utils.FUCN_TYPE) return computeFun(SelectedAction, x, y).toString();
+            // In the case of a function, we calculate it using the appropriate method:
+            case Ex2Utils.FUCN_TYPE -> computeFun(SelectedAction, x, y).toString();
 
-        // In case of undefined content type - we will push an error:
-        else throw new IllegalArgumentException("Invalid IF");
+            // In case of undefined content type (including error type) - we will push an error:
+            default -> throw new IllegalArgumentException("Invalid IF arguments");
+        };
     }
 
     /**
@@ -784,7 +769,7 @@ public class Ex2Sheet implements Sheet {
             // let's use matches in order to cover lowercase and uppercase letters together
             if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ "\\(.*")) && (form.endsWith(")")))
             {
-                // We will remove the beginning of the string: "=<FUNCTION>(" and the ")" at the end. so we are left onlt with the range "Xnn:Ynn".
+                // We will remove the beginning of the string: "=<FUNCTION>(" and the ")" at the end. so we are left only with the range "Xnn:Ynn" (nn is a number for the Y-cord).
                 int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
                 form = form.substring(selectRMV,form.length()-1);
 
@@ -852,7 +837,6 @@ public class Ex2Sheet implements Sheet {
         return AllCellRange;
     }
 
-
     /**
      * This method parses a conditional expression (e.g., "A1*2 > B2") and evaluates it as true or false.
      * It supports the following operators: <, >, ==, <=, >=, !=.
@@ -864,22 +848,22 @@ public class Ex2Sheet implements Sheet {
      * @return true if the condition is "satisfied", false otherwise.
      */
     private boolean evaluateCondition(String condition, int x, int y) {
-        String selectedOp = null; // the condition operator
+        Integer selectedOP = null; // the operator of the condition, according to Ex2Utils.B_OPS array
 
         // Searches for the operator within the string:
-        for (String op : Ex2Utils.B_OPS) {
-            if (condition.contains(op)) {
+        for (int i = 0; i < Ex2Utils.B_OPS.length; i++) {
+            if (condition.contains(Ex2Utils.B_OPS[i])) {
                 // We found an operator, let's save it and break out of the loop
-                selectedOp = op;
+                selectedOP = i;
                 break;
             }
         }
 
         // We will throw an error if we do not find an operator.
-        if (selectedOp == null) throw new IllegalArgumentException("Invalid IF format");
+        if (selectedOP == null) throw new IllegalArgumentException("Invalid IF format");
 
         // We will split the string according to the operator
-        String[] ConditionParts = condition.split(selectedOp);
+        String[] ConditionParts = condition.split(Ex2Utils.B_OPS[selectedOP]);
 
         // In case we did not get exactly two parts from the string division by the operator - we will throw an error.
         if (ConditionParts.length != 2) throw new IllegalArgumentException("Invalid IF format");
@@ -897,15 +881,15 @@ public class Ex2Sheet implements Sheet {
         }
 
         // We will perform the comparison according to the requested operator - and return True or false value accordingly:
-        switch (selectedOp) {
-            case "<": return val1 < val2;
-            case ">": return val1 > val2;
-            case "==": return val1 == val2;
-            case "<=": return val1 <= val2;
-            case ">=": return val1 >= val2;
-            case "!=": return val1 != val2;
-            default: throw new IllegalArgumentException("Invalid IF arguments"); // Operator selection error
-        }
+        return switch (selectedOP) {
+            case 0 -> val1 <= val2;
+            case 1 -> val1 >= val2;
+            case 2 -> val1 < val2;
+            case 3 -> val1 > val2;
+            case 4 -> val1 == val2;
+            case 5 -> val1 != val2;
+            default -> throw new IllegalArgumentException("Invalid IF arguments"); // Operator selection error
+        };
     }
 
     /**

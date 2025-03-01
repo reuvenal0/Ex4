@@ -1,4 +1,4 @@
-# Ex4 - Enhanced Graphic Spreadsheet
+# Ex4 - Enhanced graphic spreadsheet
 **The program is a graphical spreadsheet application in Java, supporting text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`), including a graphical user interface, error handling, and file save/load functionality.**
 
 This is a solution for assignment 4: Final Assignment, in Introduction to Computer Science, 2025A at Ariel University, School of Computer Science.

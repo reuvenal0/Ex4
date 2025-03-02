@@ -58,7 +58,7 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 
 ## 🩹 Error Handling
 - **Circular dependency detection**: Identifies and alerts circular references.
-- **Invalid Formula and Condition Detection**:
+- **The different types of errors in the spreadsheet**:
     - Invalid formula syntax (`ERR_FORM_FORMAT`)
     - Circular dependencies on formula (`ERR_CYCLE_FORM`)
     - Invalid conditions (`ERR_IF`)

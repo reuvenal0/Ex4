@@ -26,8 +26,8 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 ---
 
 ## 📸 Demo Screenshot
-- The image below demonstrates the program, showing all types of cells: Text, Number, Formula, Error in the formula, and Circular Dependency Error:
-??
+- The image below demonstrates the program, showing all types of cells and errors:
+
 ---
 
 ## 🔧 Installation & Setup
@@ -73,7 +73,7 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 - **Function calculations** over a range of cells.
 - **condition evaluation** and **return expected results**.
 - **Error handling** for invalid inputs.
-- **File I/O operations** for save/load functionality.
+- **File I/O operations** for save/load functionality (see the example file `Save_Load_Test.txt`).
 ---
 
 ## 📌 Some Cells examples

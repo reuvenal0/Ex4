@@ -119,7 +119,6 @@ public class CellEntry  implements Index2D {
     public int getY() {return this.y;}
 
     /**
-     * We get the coordinates using a string that marks a cell in the spreadsheet
      * @return the cell index representation in form of a spreadsheet String (e.g., "B3").
      */
     @Override

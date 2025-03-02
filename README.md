@@ -1,4 +1,5 @@
 # Ex4 - Enhanced graphic spreadsheet
+## 🔍 Overview
 **The program is a graphical spreadsheet application in Java, supporting text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`), including a graphical user interface, error handling, and file save/load functionality.**
 
 This is a solution for assignment 4: Final Assignment, in Introduction to Computer Science, 2025A at Ariel University, School of Computer Science.
@@ -22,7 +23,6 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
     - `sum`: Sum of all values in a range (e.g., `=sum(A0:C3)`)
     - `average`: Average of all values in a range (e.g., `=average(A0:C3)`)
 - **File I/O**: Save and load spreadsheet data, including all advanced functionalities.
-
 ---
 
 ## 📸 Demo Screenshot
@@ -109,6 +109,11 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
     ```A0 == B0 + 5```  
     ```B0 == A0 - 3```
 
+### **❌ Invalid values:**
+-  `=A1 +` *(missing second operand)*
+-  `=min(A1)` *(Must specify a range)*
+- `=if(A1>5,10)` *(Missing `false` case)*
+---
 
 ## 🧩 My Class Structure
 Here is a brief description of each class and its responsibility in the project:

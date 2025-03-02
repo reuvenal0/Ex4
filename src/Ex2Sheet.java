@@ -762,15 +762,15 @@ public class Ex2Sheet implements Sheet {
         if ((form == null) || form.isEmpty()) throw new IllegalArgumentException("invalid value");
 
         // First, we will loop over the various functions that are predefined for us, so we can easily perform our calculations and tests:
-        for (int i = 0; i < Ex2Utils.FUNCTIONS.length; i++) {
+        for (int Function = 0; Function < Ex2Utils.FUNCTIONS.length; Function++) {
 
             // For a valid function string, the string needs to start with "=<FUNCTION>(" and end with ")".
             // We will throw an error if the string does not meet these conditions
             // let's use matches in order to cover lowercase and uppercase letters together
-            if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[i]+ "\\(.*")) && (form.endsWith(")")))
+            if ((form.matches("(?i)^=" + Ex2Utils.FUNCTIONS[Function]+ "\\(.*")) && (form.endsWith(")")))
             {
                 // We will remove the beginning of the string: "=<FUNCTION>(" and the ")" at the end. so we are left only with the range "Xnn:Ynn" (nn is a number for the Y-cord).
-                int selectRMV = Ex2Utils.FUNCTIONS[i].length()+2;
+                int selectRMV = Ex2Utils.FUNCTIONS[Function].length()+2;
                 form = form.substring(selectRMV,form.length()-1);
 
                 // We will create an object of the range, and insert the range we received in the string (according to the format, this is what should remain in the string as we said)
@@ -788,7 +788,7 @@ public class Ex2Sheet implements Sheet {
                 List<Double> AllCellRange = getRangeCells(range);
 
                 // The range is correct, so we send it to the appropriate function for calculation:
-                switch (i) {
+                switch (Function) {
                     case 0: return Ex2Utils.sum(AllCellRange);
                     case 1: return Ex2Utils.average(AllCellRange);
                     case 2: return Ex2Utils.min(AllCellRange);

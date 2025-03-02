@@ -67,12 +67,12 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 
 ## 🧪 Testing
 The project includes comprehensive **JUnit tests** for all core functionalities, including:
-- **Basic cell operations** (text, number, formula, condition, function).
-- **Circular dependency detection**.
-- **Formula evaluation** and **syntax error detection**.
+- **variety of cell types** (text, number, formula, condition, function).
+- **Formula evaluation**.
 - **Function calculations** over a range of cells.
 - **condition evaluation** and **return expected results**.
 - **Error handling** for invalid inputs.
+- - **Circular dependency detection**.
 - **File I/O operations** for save/load functionality (see the example file `Save_Load_Test.txt`).
 ---
 
@@ -105,7 +105,7 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
    ```=SUM(A0:A5)```
 
 ### **Circular dependency** (🟥 *Dark Red*)
-8. **Circular dependency example - formula cycle error::**  
+8. **Circular dependency example - formula cycle error:**  
     ```A0 == B0 + 5```  
     ```B0 == A0 - 3```
 

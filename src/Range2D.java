@@ -2,6 +2,7 @@ public class Range2D {
     /**
      * Range2D represents a 2-dimensional range defined by a start and end cell.
      * It validates the range and provides methods to access the indices and check containment.
+     * an exception is thrown in a case of invalid range.
      */
     private CellEntry StartIndex = null; // Starting cell of the range
     private CellEntry EndIndex = null; // Ending cell of the range
@@ -90,6 +91,7 @@ public class Range2D {
     /**
      * Constructs a Range2D object from a string representation.
      * The format should be "start:end" (e.g., "A1:B2").
+     * If the range is invalid (e.g., "B2:A1" or out-of-bounds or range with spaces "A 0 : B 1"), an exception is thrown.
      * @param range The range string to parse.
      * @throws IllegalArgumentException if the range is invalid.
      */

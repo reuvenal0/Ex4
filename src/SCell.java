@@ -37,10 +37,9 @@ public class SCell implements Cell {
      *  5. Formula starts with "=" but not IF or FUNCTION -> FORM
      *  6. Otherwise -> TEXT
      *
-     *  The method does not verify that the value in the cell is correct!
-     * It only roughly checks where to assign the cell to perform the calculation.
-     * During the calculation, it checks whether the value in the cell is correct,
-     * and then if there is an error, it changes the type to the appropriate error.
+     * This method performs an initial classification of the cell type.
+     * It does not fully validate the correctness of formulas, functions, or conditions.
+     * Deeper validation is done during evaluation in Ex2Sheet (and then if there is an error, it changes the cell's type to the appropriate error).
      */
     private void computeType() {
         // An empty string is considered text (unless proven otherwise).

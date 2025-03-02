@@ -86,7 +86,7 @@ public class Ex2Utils {
     /**
      * Finds the maximum value among all numerical values in the provided list.
      * If the list is empty, it returns 0.0.
-     * @param AllCellRange A List of Double values to find the minimum from.
+     * @param AllCellRange A List of Double values to find the maximum from.
      * @return The maximum value in the list, or 0.0 if the list is empty.
      */
     public static double max (List<Double> AllCellRange) {

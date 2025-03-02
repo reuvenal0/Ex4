@@ -501,6 +501,12 @@ class Ex2Sheet_Tests {
         assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 0));
         assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(2, 1));
 
+        // Testing cycle dependence on function:
+        SmallTable.set(0, 0, "=SUM(B0:B0)");
+        SmallTable.set(1, 0, "=SUM(A0:A0)");
+        assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(0, 0));
+        assertEquals(Ex2Utils.ERR_FUCN_str, SmallTable.value(1, 0));
+
 //        todo:
 //        TestSheet.set(6, 1, "=MAX(F0:F2) - MIN(F0:F2)");
 //        assertEquals("20.0", TestSheet.value(6, 1));

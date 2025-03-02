@@ -26,7 +26,7 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 ---
 
 ## 📸 Demo Screenshot
-- The Gif below demonstrates the program, showing all types of cells and errors:
+- The Gif below demonstrates the program, showing various types of cells:
   ![](https://github.com/reuvenal0/Ex4/blob/master/Demo.gif)
 ---
 

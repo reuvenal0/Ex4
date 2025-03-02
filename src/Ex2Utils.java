@@ -32,6 +32,8 @@ public class Ex2Utils {
     public static String[] B_OPS = {"<=", ">=", "<", ">", "==","!="};
     public static  final String[] ABC= {"A","B","C","D","E","F","G","H","I","J","K","L","O","M","N","P","Q","R","S","T","U","V","W","X","Y","Z"};
 
+    // Now let's add some useful methods:
+
     /**
      * Calculates the sum of all numerical values in the provided list.
      * This method iterates over a list of Double values and accumulates their sum.

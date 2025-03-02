@@ -8,7 +8,7 @@ import java.util.*;
  * - Automatically recalculates cell values when dependencies change.
  * - Saves and loads spreadsheet data from files.
  * Limitations:
- * - todo: Arithmetic operations on a value that repeats in the same  functions cell and more
+ * - todo: Arithmetic operations on a value that repeats in the same functions cell (i.c B0 = "=max(A0:A10) + 101")
  */
 
 public class Ex2Sheet implements Sheet {

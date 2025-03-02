@@ -697,6 +697,8 @@ public final class StdDrawEx2 implements ActionListener, MouseListener, MouseMot
 		menuItem2.addActionListener(std);
 		menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItem2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menu.add(menuItem1);
 		menu.add(menuItem2);
 		return menuBar;

@@ -12,8 +12,8 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 
 ## 🔑 Key Features
 - **Graphical User Interface (GUI)**: A user-friendly interface for viewing and editing the spreadsheet.
-- **Text, Numbers, and Formulas**: Basic cell data types including arithmetic formulas (`+`, `-`, `*`, `/`).
-- **Cell References**: Support for cell references like `A1`, `B2`, enabling dynamic calculations.
+- **Text and Numbers**: Basic cell data types.
+- **Formula Cells**: including arithmetic formulas (`+`, `-`, `*`, `/`), and support for cell references like `A1`, enabling dynamic calculations.
 - **Conditional Cells**: `IF` conditions with support for:
     - Comparison operators: `<`, `>`, `==`, `<=`, `>=`, `!=`
     - Nested conditions and logical operations
@@ -79,12 +79,12 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 ## 📌 Some Cells examples
 ### **Basic Cell Types**
 
-1. **Number cell:**  
+1. **Number cell:** (⚫ *Black*) 
    ```123```
 
-2. **Text cell:**  
+2. **Text cell:**  (🟪 *Gray*)
    ```"Hello, World!"```
-### **Formula Cells**
+### **Formula Cells** (🔵 *Blue*)
 
 3. **basic arithmetic:**  
    ```=A0 + B2```
@@ -92,7 +92,7 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 4. **multiple operations and parentheses:**  
    ```=(A0 + B2) * (C3 / D4) - 5```
 
-### **Conditional (IF) Cells**
+### **Conditional (IF) Cells** (🟨 *Yellow*)
 
 5. **Basic `IF` condition:**  
    ```=IF(A0>10, "High", "Low")```
@@ -100,20 +100,20 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 6. **Nested `IF` condition (multiple conditions):**  
    ```=IF(B2<=5, "Small", IF(B2<=10, "Medium", "Large"))```
 
-### **Function Cells**
+### **Function Cells** (🟩 *Green*)
 7. **Simple function (sum of a range):**  
    ```=SUM(A0:A5)```
 
-### **Circular dependency**
+### **Circular dependency** (🟥 *Dark Red*)
 8. **Circular dependency example - formula cycle error::**  
     ```A0 == B0 + 5```  
     ```B0 == A0 - 3```
 
 ### **❌ Invalid values**
 **A few short examples of invalid data, which defined as errors, depending on their type:**
--  `=A1 +` *(missing second operand)*
--  `=min(A1)` *(Must specify a range)*
-- `=if(A1>5,10)` *(Missing `false` case)*
+-  `=A1 +` *(missing second operand)* 🔴 *Red*
+-  `=min(A1)` *(Must specify a range)* 💖 *Pink*
+- `=if(A1>5,10)` *(Missing `false` case)* 🟣 *Magenta*
 ---
 
 ## 🧩 My Class Structure

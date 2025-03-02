@@ -110,6 +110,7 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
     ```B0 == A0 - 3```
 
 ### **❌ Invalid values:**
+**A few short examples of invalid data, which defined as errors, depending on their type:**
 -  `=A1 +` *(missing second operand)*
 -  `=min(A1)` *(Must specify a range)*
 - `=if(A1>5,10)` *(Missing `false` case)*

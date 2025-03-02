@@ -17,10 +17,10 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
     - Comparison operators: `<`, `>`, `==`, `<=`, `>=`, `!=`
     - Nested conditions and logical operations
 - **Functions**: Calculation over a range of cells with:
-    - `min`: Minimum value in a range (e.g., `=min(A1:C3)`)
-    - `max`: Maximum value in a range (e.g., `=max(A1:C3)`)
-    - `sum`: Sum of all values in a range (e.g., `=sum(A1:C3)`)
-    - `average`: Average of all values in a range (e.g., `=average(A1:C3)`)
+    - `min`: Minimum value in a range (e.g., `=min(A0:C3)`)
+    - `max`: Maximum value in a range (e.g., `=max(A0:C3)`)
+    - `sum`: Sum of all values in a range (e.g., `=sum(A0:C3)`)
+    - `average`: Average of all values in a range (e.g., `=average(A0:C3)`)
 - **File I/O**: Save and load spreadsheet data, including all advanced functionalities.
 
 ---
@@ -105,7 +105,7 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
    ```=SUM(A1:A5)```
 
 ### **Circular dependency**
-8.**Circular dependency example - formula cycle error::**  
+8. **Circular dependency example - formula cycle error::**  
     ```A1 == B1 + 5```  
     ```B1 == A1 - 3```
 

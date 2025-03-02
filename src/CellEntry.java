@@ -1,6 +1,6 @@
 /**
- * Represents a 2D cell index for spreadsheet-like coordinates.
- * Supports two representations:
+ * Represents a 2D cell index for spreadsheet coordinates.
+ * Supports two representation formats:
  * 1. Integer coordinates (X, Y):
  *    - X: 0 to 25 (corresponding to A-Z)
  *    - Y: 0 to 99
@@ -8,8 +8,8 @@
  * Implements Index2D interface.
  */
 public class CellEntry  implements Index2D {
-    private int x, y; // 1) X and Y coordinates representing the cell index.
-    private String cords; // 2) // String representation of the cell index (e.g., "A0", "Z67").
+    private int x, y; // 1. X and Y coordinates representing the cell index.
+    private String cords; // 2. String representation of the cell index (e.g., "A0", "Z67").
 
     /**
      * constructor for an CellEntry object -

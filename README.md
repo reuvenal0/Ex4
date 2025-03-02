@@ -51,9 +51,9 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 - **Adding Data**:
     - Enter text directly (e.g., `Hello`).
     - Enter numbers (e.g., `123`).
-    - Use formulas with `=` prefix (e.g., `=A1+B2`).
-    - Use conditions with `IF` (e.g., `=if(A1>10, High, Low)`).
-    - Use functions for range calculations (e.g., `=sum(A1:C3)`).
+    - Use formulas with `=` prefix (e.g., `=A0+B0`).
+    - Use conditions with `IF` (e.g., `=if(A0>10, High, Low)`).
+    - Use functions for range calculations (e.g., `=sum(A0:C3)`).
 ---
 
 ## 🩹 Error Handling
@@ -87,41 +87,41 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 ### **Formula Cells**
 
 3. **basic arithmetic:**  
-   ```=A1 + B2```
+   ```=A0 + B2```
 
 4. **multiple operations and parentheses:**  
-   ```=(A1 + B2) * (C3 / D4) - 5```
+   ```=(A0 + B2) * (C3 / D4) - 5```
 
 ### **Conditional (IF) Cells**
 
 5. **Basic `IF` condition:**  
-   ```=IF(A1>10, "High", "Low")```
+   ```=IF(A0>10, "High", "Low")```
 
 6. **Nested `IF` condition (multiple conditions):**  
    ```=IF(B2<=5, "Small", IF(B2<=10, "Medium", "Large"))```
 
 ### **Function Cells**
 7. **Simple function (sum of a range):**  
-   ```=SUM(A1:A5)```
+   ```=SUM(A0:A5)```
 
 ### **Circular dependency**
 8. **Circular dependency example - formula cycle error::**  
-    ```A1 == B1 + 5```  
-    ```B1 == A1 - 3```
+    ```A0 == B0 + 5```  
+    ```B0 == A0 - 3```
 
 
 ## 🧩 My Class Structure
 Here is a brief description of each class and its responsibility in the project:
 
-1. **`SCell`** - Represents an individual cell in the spreadsheet. Determines the type of data (text, number, formula, condition, function) and provides methods for data manipulation.
+1. **`SCell`** - Represents an individual cell in the spreadsheet. Determines the initial type of data (text, number, formula, condition, function) and provides methods for data manipulation.
 
 2. **`Ex2Sheet`** - Implements the spreadsheet logic. Manages a 2D array of `SCell` objects, handles formulas, conditions, function evaluation, circular dependency detection, and file I/O operations.
 
-3. **`Ex2GUI`** - Provides the graphical user interface (GUI) for interacting with the spreadsheet. Handles user input, cell selection, visualization, and error highlighting.
+3. **`Ex2GUI`** - Provides the graphical user interface (GUI) for interacting with the spreadsheet. Handles user input, cell selection and visualization.
 
 4. **`CellEntry`** - Converts between string-based cell coordinates (e.g., `"A1"`) and numeric indices `(x, y)`. Ensures valid cell references.
 
-5. **`Range2D`** - Represents a range of cells (e.g., `"A1:C3"`). Validates ranges and provides methods to access start and end indices.
+5. **`Range2D`** - Represents a range of cells (e.g. `"A0:C3"`). Validates ranges and provides methods to access start and end indices.
 
 6. **`Ex2Utils`** - Contains utility functions and constants for spreadsheet calculations, including predefined functions (`sum`, `average`, `min`, `max`) and error handling codes.
 

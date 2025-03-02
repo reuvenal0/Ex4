@@ -111,26 +111,21 @@ The project includes comprehensive **JUnit tests** for all core functionalities,
 
 
 ## 🧩 My Class Structure
-- `SCell`: Individual cell - implementation of the `Cell` interface
-  - Stores cell data, type, and order.
-  - Supported data: text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`).
-  - Initial type verification and error handling (`ERR_FORM_FORMAT`, `ERR_CYCLE_FORM`, `ERR_IF`, `ERR_FUNC`).
+Here is a brief description of each class and its responsibility in the project:
 
-- `Ex2Sheet`: Main spreadsheet - implementation of the `Sheet` interface
-  - Creates and manages the 2D array of cells.
-  - Handles formula, conditions (`IF`) and functions evaluation.
-  - Identifies errors in formula calculation, circular references, and invalid conditions/functions.
-  - Calculates the depth of cells: Counting dependencies for accurate evaluation order.
-  - Implements save/load functionality.
+1. **`SCell`** - Represents an individual cell in the spreadsheet. Determines the type of data (text, number, formula, condition, function) and provides methods for data manipulation.
 
-- `CellEntry`: Cell coordinate handler - implementation of the `Index2d` interface
-  - Converts between string coordinates (`"A1"`, `"B2"`) and numeric indices (`x`, `y`).
-  - Validates cell references as valid Indexes.
+2. **`Ex2Sheet`** - Implements the spreadsheet logic. Manages a 2D array of `SCell` objects, handles formulas, conditions, function evaluation, circular dependency detection, and file I/O operations.
 
-- `Range2D`: Range handler for cell groups (e.g., `A1:C3`)
-  - Represents a 2D range of cells using start and end coordinates.
-  - Validates range format.
-  - Integrates with `Ex2Sheet` for efficient range evaluations (ensures the range is within spreadsheet boundaries).
+3. **`Ex2GUI`** - Provides the graphical user interface (GUI) for interacting with the spreadsheet. Handles user input, cell selection, visualization, and error highlighting.
+
+4. **`CellEntry`** - Converts between string-based cell coordinates (e.g., `"A1"`) and numeric indices `(x, y)`. Ensures valid cell references.
+
+5. **`Range2D`** - Represents a range of cells (e.g., `"A1:C3"`). Validates ranges and provides methods to access start and end indices.
+
+6. **`Ex2Utils`** - Contains utility functions and constants for spreadsheet calculations, including predefined functions (`sum`, `average`, `min`, `max`) and error handling codes.
+
+7. **`StdDrawEx2`** - Custom graphics library extending `StdDraw` for rendering the spreadsheet grid and handling graphical interactions.
 ---
 
 

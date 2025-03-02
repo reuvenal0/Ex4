@@ -56,31 +56,8 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
     - Use functions for range calculations (e.g., `=sum(A1:C3)`).
 ---
 
-## 🧩 My Class Structure
-- `SCell`: Individual cell - implementation of the `Cell` interface
-    - Stores cell data, type, and order.
-    - Supported data: text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`).
-    - Initial type verification and error handling (`ERR_FORM_FORMAT`, `ERR_CYCLE_FORM`, `ERR_IF`, `ERR_FUNC`).
-
-- `Ex2Sheet`: Main spreadsheet - implementation of the `Sheet` interface
-    - Creates and manages the 2D array of cells.
-    - Handles formula, conditions (`IF`) and functions evaluation.
-    - Identifies errors in formula calculation, circular references, and invalid conditions/functions.
-    - Calculates the depth of cells: Counting dependencies for accurate evaluation order.
-    - Implements save/load functionality.
-
-- `CellEntry`: Cell coordinate handler - implementation of the `Index2d` interface
-    - Converts between string coordinates (`"A1"`, `"B2"`) and numeric indices (`x`, `y`).
-    - Validates cell references as valid Indexes.
-
-- `Range2D`: Range handler for cell groups (e.g., `A1:C3`)
-    - Represents a 2D range of cells using start and end coordinates.
-    - Validates range format.
-    - Integrates with `Ex2Sheet` for efficient range evaluations (ensures the range is within spreadsheet boundaries).
----
-
 ## 🩹 Error Handling
-- **Circular Dependency Detection**: Identifies and alerts circular references.
+- **Circular dependency detection**: Identifies and alerts circular references.
 - **Invalid Formula and Condition Detection**:
     - Invalid formula syntax (`ERR_FORM_FORMAT`)
     - Circular dependencies on formula (`ERR_CYCLE_FORM`)
@@ -91,10 +68,69 @@ This project is based on **Assignment 2** [(link to my solution for Ex2)](https:
 ## 🧪 Testing
 The project includes comprehensive **JUnit tests** for all core functionalities, including:
 - **Basic cell operations** (text, number, formula, condition, function).
-- **circular dependency detection**.
+- **Circular dependency detection**.
 - **Formula evaluation** and **syntax error detection**.
 - **Function calculations** over a range of cells.
-- **condition evaluation** and **calculating a desired result**.
+- **condition evaluation** and **return expected results**.
 - **Error handling** for invalid inputs.
 - **File I/O operations** for save/load functionality.
 ---
+
+## 📌 Some Cells examples
+### **Basic Cell Types**
+
+1. **Number cell:**  
+   ```123```
+
+2. **Text cell:**  
+   ```"Hello, World!"```
+### **Formula Cells**
+
+3. **basic arithmetic:**  
+   ```=A1 + B2```
+
+4. **multiple operations and parentheses:**  
+   ```=(A1 + B2) * (C3 / D4) - 5```
+
+### **Conditional (IF) Cells**
+
+5. **Basic `IF` condition:**  
+   ```=IF(A1>10, "High", "Low")```
+
+6. **Nested `IF` condition (multiple conditions):**  
+   ```=IF(B2<=5, "Small", IF(B2<=10, "Medium", "Large"))```
+
+### **Function Cells**
+7. **Simple function (sum of a range):**  
+   ```=SUM(A1:A5)```
+
+### **Circular dependency**
+8.**Circular dependency example - formula cycle error::**  
+    ```A1 == B1 + 5```  
+    ```B1 == A1 - 3```
+
+
+## 🧩 My Class Structure
+- `SCell`: Individual cell - implementation of the `Cell` interface
+  - Stores cell data, type, and order.
+  - Supported data: text, numbers, formulas, conditions (`IF`), and functions (`min`, `max`, `sum`, `average`).
+  - Initial type verification and error handling (`ERR_FORM_FORMAT`, `ERR_CYCLE_FORM`, `ERR_IF`, `ERR_FUNC`).
+
+- `Ex2Sheet`: Main spreadsheet - implementation of the `Sheet` interface
+  - Creates and manages the 2D array of cells.
+  - Handles formula, conditions (`IF`) and functions evaluation.
+  - Identifies errors in formula calculation, circular references, and invalid conditions/functions.
+  - Calculates the depth of cells: Counting dependencies for accurate evaluation order.
+  - Implements save/load functionality.
+
+- `CellEntry`: Cell coordinate handler - implementation of the `Index2d` interface
+  - Converts between string coordinates (`"A1"`, `"B2"`) and numeric indices (`x`, `y`).
+  - Validates cell references as valid Indexes.
+
+- `Range2D`: Range handler for cell groups (e.g., `A1:C3`)
+  - Represents a 2D range of cells using start and end coordinates.
+  - Validates range format.
+  - Integrates with `Ex2Sheet` for efficient range evaluations (ensures the range is within spreadsheet boundaries).
+---
+
+
